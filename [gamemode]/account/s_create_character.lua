@@ -81,9 +81,9 @@ function newCharacter_create(characterName, characterDescription, race, gender, 
 		exports.anticheat:changeProtectedElementDataEx(client, "dbid", id, false)
 		exports['item-system']:loadItems( client, true )
 		exports.global:giveItem( client, 16, skin )
-		exports.global:giveItem( client, 17, 1 )
-		exports.global:giveItem( client, 262, 1 ) -- Tokens
-		exports.global:giveItem( client, 263, 1 )
+		--exports.global:giveItem( client, 17, 1 ) -- Watch
+		--exports.global:giveItem( client, 262, 1 ) -- Tokens
+		--exports.global:giveItem( client, 263, 1 )
 		-- ID CARD
 		exports.global:giveItem( client, 152, characterName..";"..(gender==0 and "Male" or "Female")..";"..exports.global:numberToMonth(month).." "..exports.global:formatDate(day)..", "..year..";"..fingerprint)
 		-- Briefcase

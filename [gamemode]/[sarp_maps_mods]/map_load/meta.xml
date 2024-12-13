@@ -1,0 +1,21 @@
+<meta>
+	<info author='Maxime - OwlGaming'/>
+
+	<script src='map_load_g.lua' type='shared'/>
+	<script src='map_load_s.lua' type='server'/>
+	<script src='map_load_c.lua' type='client'/>
+
+	<script src='lod_map_objects_s.lua' type='server'/>
+	<script src='lod_map_objects_c.lua' type='client'/>
+
+	<!-- Fernando -->
+	<export function="isLoadingMaps" type="client"/>
+
+	<export function="loadMap" type="shared"/>
+	<export function="unloadMap" type="shared"/>
+	<export function="isMapLoaded" type="shared"/>
+	<export function="unloadAllMaps" type="shared"/>
+	<export function="getMapObjects" type="server"/>
+
+	<setting name="#useLODs" value="[ true ]"></setting>
+</meta>

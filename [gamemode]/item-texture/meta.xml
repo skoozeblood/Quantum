@@ -1,21 +1,30 @@
 <meta>
-	<info type="script" author="Exciter" version="1.0" />
-
-	<file src="shaders/replacement.fx" />
-	<file src="shaders/decal.fx" />
-	<file src="trans.png" />
-
-	<script src="g_itemtexture.lua" type="shared" protected="true" />
-
-	<script src="c_itemtexture.lua" type="client" protected="true" />
-		<export function="validateFileFromURL" type="client" />
-	<script src="s_itemtexture.lua" type="server" />
-		<export function="addTexture" type="server" />
-		<export function="removeTexture" type="server" />
-		<export function="validateFileFromURL" type="server" />
-
-	<script src="c_vehtex.lua" type="client" protected="true" />
-	<script src="s_vehtex.lua" type="server" />
-
-	<min_mta_version server="1.5.4-9.11413" client="1.5.4-9.11413" />
+    <info type="script" author="SARP" version="2.0" />
+    
+    <script src="g_itemtexture.lua" type="client" cache="false" />
+    <script src="g_itemtexture.lua" type="server" />
+    <export function="getPlateTextures" type="shared" />
+    <export function="isURL" type="shared" />
+    
+    <script src="c_itemtexture.lua" type="client" />
+    <export function="validateFileFromURL" type="client" />
+    
+    <script src="s_itemtexture.lua" type="server" />
+    <export function="addTexture" type="server" />
+    <export function="removeTexture" type="server" />
+    <export function="unCacheTexture" type="server" />
+    
+    <!-- New: Fernando 06/12/2021 -->
+    <export function="replaceWithDefaultTexture" type="client" />
+    <export function="addTexture" type="client" />
+    
+    <script src="c_vehtex.lua" type="client" cache="false" />
+    <script src="s_vehtex.lua" type="server" />
+    
+    <file src="shaders/pedshadow.fx" />
+    <file src="shaders/replacement.fx" />
+    <file src="shaders/decal.fx" />
+    <file src="shaders/trans.png" />
+    
+    <min_mta_version client="1.5.9" server="1.5.9" />
 </meta>

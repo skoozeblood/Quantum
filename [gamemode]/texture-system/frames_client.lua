@@ -1,4 +1,7 @@
-﻿addEvent ( "frames:showFrameGUI", true )
+﻿integration = exports.integration
+global = exports.global
+
+addEvent ( "frames:showFrameGUI", true )
 addEvent ( "frames:showTextureSelection", true )
 addEvent ( "frames:loadClientInteriorTexture", true )
 
@@ -10,10 +13,8 @@ local selectedID = 1
 local frameURL = ""
 local sw, sh = guiGetScreenSize ( )
 local visibleTextures = { }
-local extensions = {
-	[".jpg"] = true,
-	[".png"] = true,
-}
+
+
 local invalidModels = {
 	--["fridge_1b"] = false,
 	["radardisc"] = true,
@@ -94,6 +95,12 @@ function frames_hideFrameGUI ( )
 	end
 end
 
+
+function GetFileExtension(url)
+  return url:match("^.+(%..+)$")
+end
+
+
 function isURLValid ( url )
 	local url = url:lower()
 	local _extensions = ""
@@ -104,91 +111,96 @@ function isURLValid ( url )
 		if string.find(url, "http://", 1, true) or string.find(url, "https://", 1, true) then
 			local domain = url:match("[%w%.]*%.(%w+%.%w+)")
 			if domain ~= "imgur.com" then
-				return false, "Image must be from imgur"
+				return false, "Image must be from imgur.com"
 			end
 		else
 			return false, "Invalid URL"
 		end
 	end
 
-	for extension, _ in pairs ( extensions ) do
-		if _extensions ~= "" then
-			_extensions = _extensions .. ", " .. extension
-		else
-			_extensions = extension
-		end
-
-		if string.find ( url, extension, 1, true ) then
-			return true
-		end
+	if GetFileExtension(url) ~= ".png" then
+		return false, "Image URL must end in .png"
 	end
 
-	return false, "Invalid image extension. Accepted types are: " .. _extensions
+	return true
 end
 
 function frames_showTextureSelection ( slot, textureURL, imgData )
-	local integration = exports.integration
-	local global = exports.global
 	local dimension = getElementDimension ( localPlayer )
 	local interior = getElementInterior( localPlayer )
 
-	if (dimension > 0 and interior > 0) or (integration:isPlayerHeadAdmin(localPlayer) and global:isAdminOnDuty(localPlayer)) or (integration:isPlayerScripter(localPlayer) and global:isStaffOnDuty(localPlayer)) then
-		if (dimension < 20000 and exports.global:hasItem(localPlayer, 4, dimension)) or (dimension < 20000 and exports.global:hasItem(localPlayer, 5, dimension)) or (dimension > 20000 and exports.global:hasItem(localPlayer, 3, dimension-20000)) or (exports.integration:isPlayerAdmin(localPlayer) and exports.global:isAdminOnDuty(localPlayer)) or (exports.integration:isPlayerScripter(localPlayer) and exports.global:isStaffOnDuty(localPlayer)) or (dimension == 0) or (interior == 0) then
-			rendering = not rendering
+	local admEditPerm = hasWorldEditPerm(localPlayer)
+	local iOwnerPerm = legitimateOwner(localPlayer, dimension)
 
-			if rendering then
-				visibleTextures = { }
+	if dimension == 0 and interior == 0 and not admEditPerm then
 
-				-- currently replaced?
-				local thisInterior = savedTextures[getElementDimension(localPlayer)] or {}
-				local tmpBlocked = {}
-				for k, v in pairs(thisInterior) do
-					tmpBlocked[v.texture] = true
-				end
-
-				for _, name in ipairs ( engineGetVisibleTextureNames ( ) ) do
-					if not invalidModels[name] and not tmpBlocked[name] then
-						table.insert ( visibleTextures, name )
-					end
-				end
-
-				if textureURL:sub(1, 4) == "cef+" then
-					texture = dxCreateTexture ( "browser_placeholder.jpg", "argb", true, "clamp", "2d", 1 )
-				else
-					texture = dxCreateTexture ( imgData, "argb", true, "clamp", "2d", 1 )
-
-					-- Resolution check
-					if texture then
-						local width, height = dxGetMaterialSize ( texture )
-
-						if width > 1024 or height > 1024 then
-							outputChatBox ( "Texture cannot have a width and height greater than 1024px.", 255, 0, 0, false )
-							return
-						end
-					end
-				end
-
-				shaders[localPlayer] = dxCreateShader ( "shaders/replacement.fx", 1, 100, true, "world,object" )
-
-				if shaders[localPlayer] then
-					dxSetShaderValue ( shaders[localPlayer], "Tex0", texture )
-					engineApplyShaderToWorldTexture ( shaders[localPlayer], visibleTextures[selectedID], nil, true )
-
-					for _, v in pairs(KEYS) do
-						bindKey ( v, "down", frames_keySwitch, slot, textureURL )
-					end
-					setElementFrozen(localPlayer, true)
-					playSoundFrontEnd(5)
-					addEventHandler ( "onClientRender", root, frames_renderTextureSelection )
-				end
-			else
-				frames_hidePreview ( )
-			end
-		else
-			outputChatBox ( "You do not own this interior.", 255, 0, 0, false )
+		outputChatBox("You do not have permission to edit the exterior world.", 187, 187, 187)
+		if exports.integration:isPlayerTrialAdmin(localPlayer) then
+			outputChatBox("You need to be on admin duty to gain access.", 222, 187, 222)
 		end
-	elseif dimension <= 0 then
-		outputChatBox ( "You are not inside an interior.", 255, 0, 0, false )
+		return
+	end
+
+	if dimension > 0 then
+		if not iOwnerPerm and not admEditPerm then
+			outputChatBox("You do not have permission to edit textures in this interior.", 187, 187, 187)
+			if exports.integration:isPlayerTrialAdmin(localPlayer) then
+				outputChatBox("You need to be on admin duty to gain access.", 222, 187, 222)
+			end
+			return
+		end
+	end
+
+	rendering = not rendering
+
+	if rendering then
+		visibleTextures = { }
+
+		-- currently replaced?
+		local thisInterior = savedTextures[getElementDimension(localPlayer)] or {}
+		local tmpBlocked = {}
+		for k, v in pairs(thisInterior) do
+			tmpBlocked[v.texture] = true
+		end
+
+		for _, name in ipairs ( engineGetVisibleTextureNames ( ) ) do
+			if not invalidModels[name] and not tmpBlocked[name] then
+				table.insert ( visibleTextures, name )
+			end
+		end
+
+		if textureURL:sub(1, 4) == "cef+" then
+			texture = dxCreateTexture ( "browser_placeholder.png", "argb", true, "clamp", "2d", 1 )
+		else
+			texture = dxCreateTexture ( imgData, "argb", true, "clamp", "2d", 1 )
+
+			-- Resolution check
+			if texture then
+				local width, height = dxGetMaterialSize ( texture )
+
+				if width > 1024 or height > 1024 then
+					outputChatBox ( "Texture cannot have a width and height greater than 1024px.", 255, 0, 0, false )
+					frames_hidePreview ( )
+					return
+				end
+			end
+		end
+
+		shaders[localPlayer] = dxCreateShader ( "shaders/replacement.fx", 1, 100, true, "world,object" )
+
+		if shaders[localPlayer] then
+			dxSetShaderValue ( shaders[localPlayer], "Tex0", texture )
+			engineApplyShaderToWorldTexture ( shaders[localPlayer], visibleTextures[selectedID], nil, true )
+
+			for _, v in pairs(KEYS) do
+				bindKey ( v, "down", frames_keySwitch, slot, textureURL )
+			end
+			setElementFrozen(localPlayer, true)
+			playSoundFrontEnd(5)
+			addEventHandler ( "onClientRender", root, frames_renderTextureSelection )
+		end
+	else
+		frames_hidePreview ( )
 	end
 end
 
@@ -245,7 +257,9 @@ function frames_hidePreview ( )
 	end
 	setElementFrozen(localPlayer, false)
 
-	engineRemoveShaderFromWorldTexture ( shaders[localPlayer], visibleTextures[selectedID] )
+	if isElement(shaders[localPlayer]) then
+		engineRemoveShaderFromWorldTexture ( shaders[localPlayer], visibleTextures[selectedID] )
+	end
 
 	selectedID = 1
 

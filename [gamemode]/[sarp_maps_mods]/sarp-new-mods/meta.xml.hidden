@@ -1,0 +1,48 @@
+<meta>
+    <!-- 
+    IMPORTANT: This resource's meta.xml is ignored by Git because it gets actively auto updated
+    by script with the uploaded mod file paths
+
+    Don't forget to update this when you update your own meta.xml
+     -->
+    
+    <info author="SARP by Fernando" type="script" description="New IDs Mods" />
+    <min_mta_version client="1.5.9"></min_mta_version>
+    
+    <script src="scripts/newmods/g_newmods.lua" type="server" />
+    <script src="scripts/newmods/g_newmods.lua" type="client" cache="false" />
+    
+    <script src="scripts/newmods/s_newmods.lua" type="server" />
+    <script src="scripts/newmods/c_newmods.lua" type="client" cache="false" />
+    
+    <script src="scripts/newmods/images/s_images.lua" type="server" />
+    <script src="scripts/newmods/images/c_images.lua" type="client" cache="false" />
+    
+    <script src="scripts/newmods/testing/s_nm_testing.lua" type="server" />
+    <script src="scripts/newmods/testing/c_nm_testing.lua" type="client" cache="false" />
+
+    <!-- Exported global functions -->
+    <export function="getVehicleCustomModel" type="shared" />
+    <export function="getVehicleCustomName" type="shared" />
+    <export function="getVehicleCustomProperties" type="shared" />
+    <export function="getVehicleBaseModel" type="shared" />
+    <export function="getVehicleNameFromModelNew" type="shared" />
+    <export function="getVehicleModelFromNameNew" type="shared" />
+    <export function="getOriginalHandlingNew" type="shared" />
+    <export function="createVehicleNew" type="shared" />
+    <export function="formatModPurpose" type="shared" />
+    <export function="formatModType" type="shared" />
+    <export function="isModReviewer" type="shared" />
+    <export function="isModFullPerm" type="shared" />
+    <export function="isCustomMod" type="shared" />
+    
+    <!-- Exported client functions -->
+    <export function="getImage" type="client" />
+    <export function="getRealModelID" type="client" />
+    
+    <!-- Exported server functions -->
+    <export function="getModUploads" type="server" />
+    <export function="makeUploadNotification" type="server" />
+    <export function="getNewMods" type="server" http="true" />
+    
+</meta>

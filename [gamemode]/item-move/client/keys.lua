@@ -1,6 +1,7 @@
 local movespeed = 0.02
 local slowmovespeed = 0.004
-local fastmovespeed = 0.08
+-- local fastmovespeed = 0.08
+local fastmovespeed = 0.3
 local rotatespeed = 1
 local slowrotatespeed = 0.2
 local fastrotatespeed = 3
@@ -87,10 +88,6 @@ function updateKeys( object )
     local rot = getCameraRotation( )
     local speed = movespeed
 
-    if getElementData(object, "protected") then 
-      return false
-    end
-    
     -- moving the object somewhere
     local function move( n, dist )
       if math.abs(dist) < 0.03 then
@@ -121,6 +118,7 @@ function updateKeys( object )
       controller[k] = v
     end
 
+    -- iprint(x,y,z,rx,ry,rz)
     return x, y, z, rx, ry, rz, deselect, reset, next, prev
   end
   return nil, nil, nil, nil, nil, nil, false, false, next, prev

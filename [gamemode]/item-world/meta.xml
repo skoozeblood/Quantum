@@ -8,7 +8,10 @@
 	<script src="c_permissions.lua" type="client" protected="true"/>
 	<script src="s_permissions.lua" type="server"/>
 
+	<export function="getWorldItem" type="shared"/>
+
 	<export function="createItem" type="server"/>
+	<export function="reloadOneItem" type="server"/>
 	<export function="updateItemValue" type="server"/>
 	<export function="setData" type="server"/>
 	<export function="getData" type="server"/>

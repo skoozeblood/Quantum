@@ -28,12 +28,19 @@ function loadBrowserTexture(data, reference)
         end, 200, 1)
     end, false)
 
+    -- Fernando
+    local disabledBrowsers = (getElementData(localPlayer, "disableCEF") or "0") == "1"
+    if disabledBrowsers then
+        triggerEvent("displayMesaage", localPlayer, "Web-browsers are disabled via F10 settings. Not rendering video textures.", 'error')
+        return dxCreateTexture("browser_placeholder.png", "argb", true, "clamp", "2d", 1)
+    end
+
     -- gui browser
     local guiBrowser = guiCreateBrowser(5, 25, width, height, false, false, false, wBrowser)
     local realBrowser = guiGetBrowser(guiBrowser)
     addEventHandler("onClientBrowserCreated", guiBrowser, function()
         loadBrowserURL(source, data.url:sub(5))
-        setBrowserVolume(source, 0)
+        setBrowserVolume(source, 1)
     end)
 
     addEventHandler("onClientBrowserLoadingStart", realBrowser, function()
@@ -64,9 +71,11 @@ function loadBrowserTexture(data, reference)
         setElementData(realBrowser, "loaded", true, false)
         return realBrowser
     else
+        triggerEvent("displayMesaage", localPlayer, "Failed to stream video textures from URL because you did not allow it yet.", 'error')
+        outputChatBox("Click 'Browser Textures' on the bottom-right corner of your screen then 'Unlock Resources'.", 255, 255, 0)
         setElementData(realBrowser, "loaded", false, false)
-        outputDebugString("not streaming browser texture since " .. data.url:sub(5) .. " is not allowed (yet)")
-        return dxCreateTexture("browser_placeholder.jpg", "argb", true, "clamp", "2d", 1)
+        -- outputDebugString("not streaming browser texture since " .. data.url:sub(5) .. " is not allowed (yet)")
+        return dxCreateTexture("browser_placeholder.png", "argb", true, "clamp", "2d", 1)
     end
 end
 
@@ -76,7 +85,21 @@ function createBrowserButtons(realBrowser)
     local guiBrowser = getElementParent(realBrowser)
     local data = getElementData(realBrowser, "data")
     local reference = getElementData(realBrowser, "reference")
-    local canModify = exports.global:hasItem(localPlayer, 4, reference.dimension) or exports.global:hasItem(localPlayer, 5, reference.dimension) or exports.global:hasItem(localPlayer, 248, data.id) or (exports.integration:isPlayerAdmin(client) and exports.global:isAdminOnDuty(client)) or exports.integration:isPlayerScripter(localPlayer)
+
+    local canModify = true
+
+    local admEditPerm = hasWorldEditPerm(localPlayer)
+    local iOwnerPerm = legitimateOwner(localPlayer, reference.dimension)
+
+    if reference.dimension == 0 and not admEditPerm then
+        canModify = false
+    end
+
+    if reference.dimension > 0 then
+        if not iOwnerPerm and not admEditPerm then
+            canModify = false
+        end
+    end
 
     local existingButtons = getElementData(realBrowser, "buttons") or {}
     for _, v in ipairs(existingButtons) do

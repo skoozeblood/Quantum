@@ -1,0 +1,26 @@
+<meta>
+	<info author="Dzsozi (h03) edited by Fernando" type="script" version="1.2" />
+
+	<script src="settingsG.lua" type="shared" />
+
+	<script src="carwashC.lua" type="client" />
+	<script src="carwashS.lua" type="server" />
+
+	<script src="grungeG.lua" type="shared" />
+	<script src="grungeC.lua" type="client" />
+	<script src="grungeS.lua" type="server" />
+	<export function="isValidDirtVehicle" type="shared"/>
+	<export function="setVehicleDirtLevel" type="shared"/>
+	<export function="getVehicleDirtLevel" type="shared"/>
+	<export function="onVehicleDirtLevelChange" type="server"/>
+	<export function="onClientVehicleDirtLevelChange" type="client"/>
+
+	<file src="files/overlay.fx" />
+	<file src="files/textureReplace.fx" />
+
+	<file src="files/images/nogrunge.png" />
+	<file src="files/images/lowgrunge.png" />
+	<file src="files/images/defaultgrunge.png" />
+	<file src="files/images/biggrunge.png" />
+	<file src="files/images/megagrunge.png" />
+</meta>

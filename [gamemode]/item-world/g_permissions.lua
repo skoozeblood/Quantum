@@ -5,11 +5,12 @@ global = exports.global
 integration = exports.integration
 
 
-
 function canEditItemProperties(thePlayer, object)
 	if not object then return false end
 	local interiorID = getElementDimension(object)
-	if exports.global:hasItem(localPlayer, 3, interiorID - 20000) or exports.global:hasItem(localPlayer, 4, interiorID) or exports.global:hasItem(localPlayer, 5, interiorID) or (exports.integration:isPlayerTrialAdmin(thePlayer) and exports.global:isAdminOnDuty(thePlayer)) or exports.integration:isPlayerScripter(thePlayer) then
+	if exports.global:hasItem(thePlayer, 4, interiorID) or exports.global:hasItem(thePlayer, 5, interiorID)
+		or (exports.integration:isPlayerTrialAdmin(thePlayer) and exports.global:isAdminOnDuty(thePlayer))
+		or (exports.integration:isPlayerScripter(thePlayer) and exports.global:isStaffOnDuty(thePlayer)) then
 		return true
 	end
 	return false
@@ -71,7 +72,7 @@ function can(player, action, element)
 		if not useData then return false end
 		for k,v in ipairs(useData) do
 			local faction = tonumber(v)
-			if exports.factions:isPlayerInFaction(player, faction) then
+			if exports["faction-system"]:isPlayerInFaction(player, faction) then
 				return true
 			end
 		end
@@ -137,4 +138,20 @@ end
 
 function isNumeric(a)
 	if tonumber(a) ~= nil then return true else return false end
+end
+
+
+----- Unrelated
+-- Exported
+
+function getWorldItem(witemID)
+	local found
+	for k, obj in ipairs(getElementsByType("object", resourceRoot)) do
+		local id = tonumber(getElementData(obj, "id"))
+		if id and id == tonumber(witemID) then
+			found = obj
+			break
+		end
+	end
+	return found
 end

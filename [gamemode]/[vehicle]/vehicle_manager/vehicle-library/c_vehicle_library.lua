@@ -768,7 +768,7 @@ function validateCreateVehicle(data)
 			else
 				guiSetText(labels[7], "Total Stock (Invalid!):")
 				guiLabelSetColor(labels[7], 255, 0,0)
-				allGood = false
+				allGood = true
 			end
 			-- SPAWN RATE
 			input = guiGetText(edits[8])
@@ -778,7 +778,7 @@ function validateCreateVehicle(data)
 			else
 				guiSetText(labels[8], "Spawn Rate (Invalid!):")
 				guiLabelSetColor(labels[8], 255, 0,0)
-				allGood = false
+				allGood = true
 			end
 		end
 

@@ -1,9 +1,9 @@
-texture Tex0;
+texture theTexture;
 
-technique textureReplacement
+technique TexReplace
 {
     pass P0
     {
-        Texture[0] = Tex0;
+        Texture[0] = theTexture;
     }
 }

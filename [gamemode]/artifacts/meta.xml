@@ -1,43 +1,163 @@
 <meta>
-	<info author="Exciter" type="script" description="Artifacts System: Handles artifacts (things players can wear that are not clothes)"/>
+	<info author="SARP - Fernando" type="script" description="Artifacts System - Wearables"/>
 
-	<script src="c_replace.lua" type="client"/>
-	<script src="c_artifacts.lua" type="client"/>
-	<script src="s_artifacts.lua" type="server"/>
-	<script src="g_artifacts.lua" type="client"/>
+	<script src="g_artifacts.lua" type="client" cache="false"/>
 	<script src="g_artifacts.lua" type="server"/>
-	<file src="texreplace.fx"></file>
 
-	<export function="getArtifacts" type="server" />
-	<export function="getArtifacts" type="client" />
-	<export function="countPlayerArtifacts" type="server" />
+	<script src="c_adjust.lua" type="client" cache="false"/>
+	<script src="c_artifacts.lua" type="client" cache="false"/>
+	<script src="s_artifacts.lua" type="server"/>
+
+	<export function="getArtifacts" type="shared" />
+	<export function="getArtifactScale" type="shared" />
+	<export function="getTextureNames" type="shared" />
 	<export function="getPlayerArtifacts" type="server" />
-	<export function="isPlayerWearingArtifact" type="server" />
-	<export function="setPlayerArtifactProperty" type="server" />
 	
-	<!-- Credit for models goes to.. Immersion Gaming Scripting Team. Used with permission (ref. RPP contract) -->	
-	<!-- Fishing Rod -->
-	<file src="models/rod.txd"/>
-	<file src="models/rod.dff"/>
-	<!-- Motocross Helmet -->
-	<file src="models/pro.dff"/>
-	<file src="models/pro.txd"/>
-	<file src="models/helmet.col"/>
-	<!-- Biker Helmet -->
-	<file src="models/bikerhelmet.dff"/>
-	<file src="models/bikerhelmet.txd"/>
-	<!-- Full Face Helmet -->
-	<file src="models/fullfacehelmet.dff"/>
-	<file src="models/fullfacehelmet.txd"/>
-	<!-- Gas Mask -->
-	<file src="models/gasmask.dff"/>
-	<file src="models/gasmask.txd"/>
-	<!-- Dufflebag -->
-	<file src="models/dufflebag.dff"/>
-	<file src="models/dufflebag.txd"/>
-	<!-- Kevlar -->
-	<file src="models/kevlar.dff"/>
-	<file src="models/kevlar.txd"/>
+	<export function="isPlayerWearingArtifact" type="server" />
+	<export function="isPlayerWearingArtifact" type="client" />
 
+	<!-- positioning images -->
+	<file src="images/arrowicon.png" type="client" />
+	<file src="images/arrowiconx.png" type="client" />
+	<file src="images/arrowicony.png" type="client" />
+	<file src="images/arrowiconz.png" type="client" />
+	<file src="images/h_arrowicon.png" type="client" />
+	<file src="images/h_arrowiconx.png" type="client" />
+	<file src="images/h_arrowicony.png" type="client" />
+	<file src="images/h_arrowiconz.png" type="client" />
+	<file src="images/h_resizeicon.png" type="client" />
+	<file src="images/h_resizeiconx.png" type="client" />
+	<file src="images/h_resizeicony.png" type="client" />
+	<file src="images/h_resizeiconz.png" type="client" />
+	<file src="images/h_rotation.png" type="client" />
+	<file src="images/h_rotationx.png" type="client" />
+	<file src="images/h_rotationy.png" type="client" />
+	<file src="images/h_rotationz.png" type="client" />
+	<file src="images/rotation.png" type="client" />
+	<file src="images/rotationx.png" type="client" />
+	<file src="images/rotationy.png" type="client" />
+	<file src="images/rotationz.png" type="client" />
+	<file src="images/saveicon.png" type="client" />
+	<file src="images/cancelicon.png" type="client" />
+	<file src="images/h_cancelicon.png" type="client" />
+	<file src="images/h_saveicon.png" type="client" />
+	<file src="images/resizeicon.png" type="client" />
+	<file src="images/resizeiconx.png" type="client" />
+	<file src="images/resizeicony.png" type="client" />
+	<file src="images/resizeiconz.png" type="client" />
+
+	<!-- Artifacts -->
+
+    <!-- Bandanas -->
+    <file src="models/banddefault.txd"/>
+    <file src="models/bandhead.dff"/>
+    <file src="models/bandknot.dff"/>
+    <file src="models/bandmask.dff"/>
+
+    <!-- Gas Mask -->
+    <file src="models/gasmask.dff"/>
+    <file src="models/gasmask.txd"/>
+    <!-- Motocross Helmet -->
+    <file src="models/helmet.dff"/>
+    <file src="models/helmet.txd"/>
+    <!-- Biker Helmet -->
+    <file src="models/bikerhelmet.dff"/>
+    <file src="models/bikerhelmet.txd"/>
+    <!-- Full Face Helmet -->
+    <file src="models/fullfacehelmet.dff"/>
+    <file src="models/fullfacehelmet.txd"/>
+    <!-- Santa Hat -->
+    <file src="models/christmashat.dff"/>
+    <file src="models/christmashat.txd"/>
+    <!-- Fishing Rod -->
+    <file src="models/rod.txd"/>
+    <file src="models/rod.dff"/>
+    <!-- Dufflebag -->
+    <file src="models/dufflebag.dff"/>
+    <file src="models/dufflebag.txd"/>
+    <!-- Backpack -->
+    <file src="models/backpack.dff"/>
+    <file src="models/backpack.txd"/>
+    <!-- Briefcase2 -->
+    <file src="models/briefcase2.dff"/>
+    <file src="models/briefcase2.txd"/>
+    <!-- Shield -->
+    <file src="models/shield.dff"/>
+    <file src="models/shield.txd"/>
+    <file src="models/shield.col"/>
+    <!-- Kevlar 1 -->
+    <file src="models/kevlar1.dff"/>
+    <file src="models/kevlar1.txd"/>
+    <!-- Kevlar 2 -->
+    <file src="models/kevlar2.dff"/>
+    <file src="models/kevlar2.txd"/>
+    <!-- Kevlar 3 -->
+    <file src="models/kevlar3.dff"/>
+    <file src="models/kevlar3.txd"/>
+    <!-- Tactical Helmet -->
+    <file src="models/swathelmet.dff"/>
+    <file src="models/swathelmet.txd"/>
+    <!-- Balaclava (Ski Mask) from SAMP -->
+    <file src="models/balaclava.dff"/>
+    <file src="models/balaclava.txd"/>
+    <!-- Traffic/Construction Vest from SAMP -->
+    <file src="models/trafficvest.dff"/>
+    <file src="models/trafficvest.txd"/>
+    <!-- Hockey Mask -->
+    <file src="models/hockeymask.dff"/>
+    <file src="models/hockeymask.txd"/>
+    <!-- Earmuffs -->
+    <file src="models/earmuffs-final.dff"/>
+    <file src="models/earmuffs-final.txd"/>
+    <!-- Sunglasses -->
+    <file src="models/sunglasses.dff"/>
+    <file src="models/sunglasses.txd"/>
+    <!-- Snapback -->
+    <file src="models/snapback.dff"/>
+    <file src="models/snapback.txd"/>
+    <!-- Holstered Gun Left Hip -->
+    <file src="models/holstgun.dff"/>
+    <file src="models/holstgun.txd"/>
+    <!-- Holstered Gun Right Hip -->
+    <file src="models/holstgunr.dff"/>
+    <file src="models/holstgunr.txd"/>
+    <!-- Cowboy Hat -->
+    <file src="models/cowboyhat.dff"/>
+    <file src="models/cowboyhat.txd"/>
+    <!-- Hunting Chest Rig -->
+    <file src="models/chestrig.dff"/>
+    <file src="models/chestrig.txd"/>
+    <!-- Chest Rig Stripped -->
+    <file src="models/chestrig-stripped.dff"/>
+    <file src="models/chestrig-stripped.txd"/>
+    <!-- Holstered Knife -->
+    <file src="models/huntingknifeholstered.dff"/>
+    <file src="models/huntingknifeholstered.txd"/>
+    <!-- AXON Body Camera -->
+    <file src="models/axonbodycam.dff"/>
+    <file src="models/axonbodycam.txd"/>
+    <!-- Headphones -->
+    <file src="models/drdre.dff"/>
+    <file src="models/drdre.txd"/>
+    <!-- Fireman Helmet -->
+    <file src="models/firehelmet.dff"/>
+    <file src="models/firehelmet.txd"/>
+
+
+    <!-- Artifact Default Textures -->
 	<file src="textures/medicbag.png"/>
+
+	<file src="textures/bandyellow.png"/>
+	<file src="textures/bandblack.png"/>
+	<file src="textures/bandblue.png"/>
+	<file src="textures/bandlightblue.png"/>
+	<file src="textures/bandorange.png"/>
+	<file src="textures/bandbrown.png"/>
+	<file src="textures/bandgreen.png"/>
+	<file src="textures/bandgrey.png"/>
+	<file src="textures/bandpurple.png"/>
+	<file src="textures/bandred.png"/>
+	<file src="textures/bandwhite.png"/>
+
+	<min_mta_version server="1.5.8" client="1.5.8" />
 </meta>

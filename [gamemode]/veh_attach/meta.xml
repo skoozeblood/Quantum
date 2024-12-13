@@ -1,0 +1,63 @@
+<meta>
+	<info author="SARP - Fernando" type="script" description="Vehicle Attachments System"/>
+
+	<!-- Fernando vehicle attachments [TEMP] -->
+	<script src="aobject/s_towhook.lua" type="server" />
+	<script src="aobject/s_lightbar.lua" type="server" />
+	<script src="aobject/s_light.lua" type="server" />
+	<script src="aobject/s_taxisign.lua" type="server" />
+	<script src="aobject/s_dmvsign.lua" type="server" />
+	<script src="aobject/s_rambar.lua" type="server" />
+	<script src="aobject/s_pushbar.lua" type="server" />
+	<script src="aobject/s_spotlight.lua" type="server" />
+
+	<export function="isTaxiSignCompatible" type="server" />
+	<export function="getTaxiSignOffs" type="server" />
+	
+	<!-- <script src="g_attach.lua" type="client" cache="false"/>
+	<script src="g_attach.lua" type="server"/>
+
+	<script src="c_adjust.lua" type="client" cache="false"/>
+	<script src="c_attach.lua" type="client" cache="false"/>
+
+	<export function="getAttachments" type="shared" />
+	<export function="getVehicleAttachments" type="server" />
+	
+	<export function="hasVehAttachment" type="server" />
+	<export function="hasVehAttachment" type="client" />
+ 	-->
+
+
+	<!-- positioning images -->
+	<!-- <file src="images/arrowicon.png" type="client" />
+	<file src="images/arrowiconx.png" type="client" />
+	<file src="images/arrowicony.png" type="client" />
+	<file src="images/arrowiconz.png" type="client" />
+	<file src="images/h_arrowicon.png" type="client" />
+	<file src="images/h_arrowiconx.png" type="client" />
+	<file src="images/h_arrowicony.png" type="client" />
+	<file src="images/h_arrowiconz.png" type="client" />
+	<file src="images/h_resizeicon.png" type="client" />
+	<file src="images/h_resizeiconx.png" type="client" />
+	<file src="images/h_resizeicony.png" type="client" />
+	<file src="images/h_resizeiconz.png" type="client" />
+	<file src="images/h_rotation.png" type="client" />
+	<file src="images/h_rotationx.png" type="client" />
+	<file src="images/h_rotationy.png" type="client" />
+	<file src="images/h_rotationz.png" type="client" />
+	<file src="images/rotation.png" type="client" />
+	<file src="images/rotationx.png" type="client" />
+	<file src="images/rotationy.png" type="client" />
+	<file src="images/rotationz.png" type="client" />
+	<file src="images/saveicon.png" type="client" />
+	<file src="images/cancelicon.png" type="client" />
+	<file src="images/h_cancelicon.png" type="client" />
+	<file src="images/h_saveicon.png" type="client" />
+	<file src="images/resizeicon.png" type="client" />
+	<file src="images/resizeiconx.png" type="client" />
+	<file src="images/resizeicony.png" type="client" />
+	<file src="images/resizeiconz.png" type="client" /> -->
+
+
+	<min_mta_version server="1.5.8" client="1.5.8" />
+</meta>

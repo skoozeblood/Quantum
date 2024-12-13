@@ -1,0 +1,10 @@
+<meta>
+	
+	<script src="replace.lua" type="client" />
+	
+	<file src="models/ammu_nation_ls.dff" />
+	<file src="models/ammu_nation_ls.txd" />
+	<file src="models/ammu_nation_ls.col" />
+	
+
+</meta>

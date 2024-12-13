@@ -2,9 +2,6 @@ function setElementData(...)
 	return anticheat:changeProtectedElementDataEx(...)
 end
 
-local loadedWorldItems = 0
-local totalWorldItems = 0
-local percent
 function loadOneWorldItem(row)
 	if row then
 		local id = tonumber(row["id"])
@@ -29,6 +26,7 @@ function loadOneWorldItem(row)
 		local permPickupData = fromJSON(type(row["perm_pickup_data"])== "string" and row["perm_pickup_data"] or "")
 		local useExactValues = tonumber(row["useExactValues"])
 		local metadata = type(row["metadata"]) == "string" and fromJSON(row["metadata"]) or nil
+		
 		if itemID < 0 then
 			itemID = -itemID
 			local modelid = 2969
@@ -39,24 +37,26 @@ function loadOneWorldItem(row)
 			else
 				modelid = weaponmodels[itemID]
 			end
-		
-			local obj = createItem(id, -itemID, itemValue, modelid, x, y, z - 0.1, 75, -10, rz2)
-			exports.pool:allocateElement(obj)
-			setElementDimension(obj, dimension)
-			setElementInterior(obj, interior)
-			setElementData(obj, "creator", creator)
-			setElementData(obj, "createdDate", createdDate)
-			
-			if protected and protected ~= 0 then
-				setElementData(obj, "protected", protected)
-			end
 
-			if metadata then
-				anticheat:changeProtectedElementDataEx(obj, "metadata", metadata)
+			local obj = createItem(id, -itemID, itemValue, modelid, x, y, z - 0.1, 75, -10, rz2)
+			if isElement(obj) then
+				exports.pool:allocateElement(obj)
+				setElementDimension(obj, dimension)
+				setElementInterior(obj, interior)
+				setElementData(obj, "creator", creator)
+				setElementData(obj, "createdDate", createdDate)
+
+				if protected and protected ~= 0 then
+					setElementData(obj, "protected", protected)
+				end
+
+				if metadata then
+					anticheat:changeProtectedElementDataEx(obj, "metadata", metadata)
+				end
 			end
 		else
-			local modelid = exports['item-system']:getItemModel(itemID, itemValue, metadata)
-			
+			local modelid, specialObject = exports['item-system']:getItemModel(itemID, itemValue, metadata)
+
 			local rx = 0
 			local ry = 0
 			local rz = 0
@@ -65,15 +65,15 @@ function loadOneWorldItem(row)
 			if useExactValues ~= 1 then
 				rx, ry, rz, zoffset = exports['item-system']:getItemRotInfo(itemID)
 			end
-			local obj = createItem(id, itemID, itemValue, modelid, x, y, z + ( zoffset or 0 ), rx+rx2, ry+ry2, rz+rz2)
-			
+			local obj = createItem(id, itemID, itemValue, modelid, x, y, z + ( zoffset or 0 ), rx+rx2, ry+ry2, rz+rz2, specialObject)
+
 			if isElement(obj) then
-				exports.pool:allocateElement(obj, id, true)
+				exports.pool:allocateElement(obj, itemID, true)
 				setElementDimension(obj, dimension)
 				setElementInterior(obj, interior)
 				setElementData(obj, "creator", creator)
 				setElementData(obj, "createdDate", createdDate)
-				
+
 				if protected and protected ~= 0 then
 					setElementData(obj, "protected", protected)
 				end
@@ -87,41 +87,43 @@ function loadOneWorldItem(row)
 				if metadata then
 					anticheat:changeProtectedElementDataEx(obj, "metadata", metadata)
 				end
-				
+
 				local scale = exports['item-system']:getItemScale(itemID, itemValue, metadata)
 				if scale then
 					setObjectScale(obj, scale)
 				end
-				
-				local dblSided = exports['item-system']:getItemDoubleSided(itemID, itemValue)
+
+				local dblSided = exports['item-system']:getItemDoubleSided(itemID, itemValue, metadata)
 				if dblSided then
-					setElementDoubleSided(obj, dblSided)
+					setElementDoubleSided(obj, true)
 				end
-			else
-				outputDebugString(id .. "/" .. itemID .. "/" .. itemValue .. "/" .. modelid)
+
+				local colEnabled = exports['item-system']:getItemCollisionsEnabled(itemID, itemValue, metadata)
+				if not colEnabled then
+					setElementCollisionsEnabled(obj, colEnabled)
+				end
+
+				local texture = exports["item-system"]:getItemTexture(itemID, itemValue, metadata)
+				if texture then
+					for k,tex in ipairs(texture) do
+																		--texname, url
+						if not exports["item-texture"]:addTexture(obj, tex[2], tex[1]) then
+							-- print("failed add tex #"..id)
+						end
+					end
+				end
 			end
 		end
-	end
-	
-	loadedWorldItems = loadedWorldItems + 1
-	if loadedWorldItems >= totalWorldItems then
-		if getRandomPlayer() then
-			triggerLatentClientEvent( 'hud:loading', resourceRoot, 'Loading world items', { max=totalWorldItems, cur=totalWorldItems } )
-		end
-		restartResource(getResourceFromName("item-texture"))
-	elseif getRandomPlayer() and percent ~= math.ceil( loadedWorldItems/totalWorldItems*100 ) then
-		percent = math.ceil( loadedWorldItems/totalWorldItems*100 )
-		triggerLatentClientEvent( 'hud:loading', resourceRoot, 'Loading world items', { max=totalWorldItems, cur=loadedWorldItems } )
 	end
 end
 
 local mysql = exports.mysql
-local timerDelay = 50
 function loadWorldItems()
-	local ticks = getTickCount( )
-	
-	local itemInactivityScannerMode = tonumber(get("inactivityscanner_items"))
-	--outputDebugString("itemInactivityScannerMode="..tostring(itemInactivityScannerMode))
+
+	-- not using this inactivity scanner stuff atm - Fernando
+
+	-- local ticks = getTickCount( )
+	-- local itemInactivityScannerMode = tonumber(get("inactivityscanner_items"))
 	--[[
 		MODES:
 		0 - off
@@ -131,27 +133,75 @@ function loadWorldItems()
 		Other excempt items: 169 (keyless digital door lock)
 		Notes (ID 72) will delete after 3 days.
 	]]
-	if itemInactivityScannerMode then
-		if itemInactivityScannerMode == 1 then
-			outputDebugString("Deleting all unprotected 30+ days old exterior and interior items (mode 1)")
-			dbExec(mysql:getConn(), "DELETE FROM `worlditems` WHERE `protected`='0' AND `itemID` NOT IN(81, 103, 169, 223, 231) AND ( (DATEDIFF(NOW(), creationdate) > 30 ) OR (DATEDIFF(NOW(), creationdate) > 3 AND `itemID` = 72) ) " )
-		elseif itemInactivityScannerMode == 2 then
-			outputDebugString("Deleting all unprotected 30+ days old exterior items (mode 2)")
-			dbExec(mysql:getConn(), "DELETE FROM `worlditems` WHERE `protected`='0' AND `itemID` NOT IN(81, 103, 169, 223, 231) AND (interior=0) AND ( (DATEDIFF(NOW(), creationdate) > 30 ) OR (DATEDIFF(NOW(), creationdate) > 3 AND `itemID` = 72) ) " )
-		end
-	end
+	-- if itemInactivityScannerMode then
+	-- 	if itemInactivityScannerMode == 1 then
+	-- 		dbExec(mysql:getConn('mta'), "DELETE FROM `worlditems` WHERE `protected`='0' AND `itemID` NOT IN(81, 103, 169, 223, 231) AND ( (DATEDIFF(NOW(), creationdate) > 30 ) OR (DATEDIFF(NOW(), creationdate) > 3 AND `itemID` = 72) ) " )
+	-- 	elseif itemInactivityScannerMode == 2 then
+	-- 		dbExec(mysql:getConn('mta'), "DELETE FROM `worlditems` WHERE `protected`='0' AND `itemID` NOT IN(81, 103, 169, 223, 231) AND (interior=0) AND ( (DATEDIFF(NOW(), creationdate) > 30 ) OR (DATEDIFF(NOW(), creationdate) > 3 AND `itemID` = 72) ) " )
+	-- 	end
+	-- end
 
-	dbExec(mysql:getConn(), "DELETE FROM `worlditems` WHERE `protected`='0' AND `itemID` NOT IN(81, 103, 169) AND (interior=0) AND ( (DATEDIFF(NOW(), creationdate) > 30 ) OR (DATEDIFF(NOW(), creationdate) > 3 AND `itemID` = 72) ) " )
+	local g_items = exports["item-system"]:getAllItems()
 	dbQuery(function(qh)
 		local res, rows, err = dbPoll(qh,0)
 		if rows > 0 then
+			local delay = 0
+			local timerDelay = 50
+
 			for k,v in pairs(res) do
-				totalWorldItems = totalWorldItems + 1
-				setTimer(loadOneWorldItem, timerDelay, 1, v)
-				timerDelay = timerDelay + 1
+				if g_items[tonumber(v.itemid)] then
+					loadOneWorldItem(v)--load all instantly causing game freeze for anyone IG
+				else
+					if exports.mysql:query_free("DELETE FROM `worlditems` WHERE `id`='" .. v.id.."' LIMIT 1") then
+						outputDebugString("item-world: ItemID #"..v.itemid.." doesn't exist. DELETED FROM DB")
+					end
+				end
 			end
-			outputDebugString("[ITEM WORLD] Loading "..(timerDelay/50-1).." world items will be finished in approximately "..tostring(math.ceil((timerDelay/1000)/60)).." minutes.")
+
+			setTimer(function()
+				triggerEvent("trash:loadTrash", resourceRoot)
+			end, 15000, 1)
 		end
-	end, mysql:getConn(), "SELECT * FROM worlditems")
+	end, mysql:getConn('mta'), "SELECT * FROM worlditems WHERE deleted=0") -- Fernando
 end
 addEventHandler("onResourceStart", resourceRoot, loadWorldItems)
+
+-- Fernando // exported
+function reloadOneItem(dbid)
+	if not dbid or not tonumber(dbid) then return false end
+	dbid = tonumber(dbid)
+
+	local object
+	for k, obj in ipairs(getElementsByType("object", resourceRoot)) do
+		if getElementData(obj, "id") == dbid then
+			object = obj
+			break
+		end
+	end
+
+	if object then
+		destroyElement(object)
+	end
+
+	-- Fernando
+	dbQuery(function(qh)
+		local res, rows, err = dbPoll(qh,0)
+		if rows > 0 then
+			loadOneWorldItem(res[1])
+		end
+	end, mysql:getConn('mta'), "SELECT * FROM worlditems WHERE deleted=0 AND id=? LIMIT 1", dbid)
+
+	return true
+end
+addEvent("item-world:reloadOneItem", true)
+addEventHandler("item-world:reloadOneItem", root, reloadOneItem)
+
+function reloadOneItemCmd(thePlayer, cmd, id)
+	if not exports.integration:isPlayerScripter(thePlayer) then return end
+	if not tonumber(id) then return outputChatBox("SYNTAX: /"..cmd.." [Worlditem ID]",thePlayer,255,194,14) end
+
+	reloadOneItem(id)
+	outputChatBox("Reloaded world item: "..id, thePlayer,25,255,25)
+end
+addCommandHandler("reloadworlditem", reloadOneItemCmd, false,false)
+addCommandHandler("reloadwi", reloadOneItemCmd, false,false)

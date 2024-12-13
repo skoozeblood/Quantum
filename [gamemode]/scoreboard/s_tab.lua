@@ -6,7 +6,7 @@
 
 
 local scoreboardDummy
-local serverName = get("serverName") or "Example"
+local serverName = get("serverName") or "Quantum"
 
 --[[
 * onResourceStart

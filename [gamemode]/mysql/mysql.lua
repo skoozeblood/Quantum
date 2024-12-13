@@ -2,7 +2,7 @@
 local hostname = get("hostname") or "localhost"
 local port = tonumber(get("port")) or 3306
 local username = get("username") or "root"
-local password = get("password") or "root"
+local password = get("password") or ""
 local database = get("database") or "mta"
 local options = ""
 local defaultDB = "mta"

@@ -1,0 +1,6 @@
+# object/vehicle textures
+cache/
+tmp_cache/
+# object/vehicle textures new
+sarp_cache/
+sarp_cache_temp/

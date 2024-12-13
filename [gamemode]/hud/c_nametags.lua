@@ -8,7 +8,7 @@ local moneyFloat = {}
 local maxIconsPerLine = 6
 function moneyUpdateFX(state, amount, toEachother)
 	if amount and tonumber(amount) and tonumber(amount) > 0  then
-		local info = {{"Personal finance update"},{""}}
+		local info = {{"Finance"},{""}}
 		local money = getElementData(localPlayer, "money") or 0
 		local bankmoney = getElementData(localPlayer, "bankmoney") or 0
 		if state then

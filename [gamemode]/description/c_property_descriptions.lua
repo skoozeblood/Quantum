@@ -365,12 +365,12 @@ function showTextProD()
 					fontWidth = fontWidth*fontType[fontString][2] --Fix custom fonts
 					px = px-(fontWidth/2)
 					--if getElementData(localPlayer, "bgPro") ~= "0" then
-					--	dxDrawRectangle(px-marg, py-marg, fontWidth+(marg*2), fontHeight+(marg*2), tocolor(0, 0, 0, 50))
+						--dxDrawRectangle(px-marg, py-marg, fontWidth+(marg*2), fontHeight+(marg*2), tocolor(0, 0, 0, 50))    this is the border behind the text of a business name when holding left alt
 					--end
 					--if getElementData(localPlayer, "borderPro") ~= "0" then
 					--	dxDrawRectangleBorder(px-marg, py-marg, fontWidth+(marg*2), fontHeight+(marg*2), 1, tocolor(255, 255, 255, 50), true)
 					--end
-					--dxDrawText(toBeShowed, px, py, px + fontWidth, (py + fontHeight), textColor, 1, fontElement, "center")
+					dxDrawText(toBeShowed, px, py, px + fontWidth, (py + fontHeight), textColor, 1, fontElement, "center")
 				end
 			end
 		end

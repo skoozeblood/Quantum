@@ -1,27 +1,30 @@
-function giveDuplicatedKey(thePlayer, itemID, value, cost)
+function giveDuplicatedKey(thePlayer, itemID, value, cost, pedName)
 	if thePlayer and itemID and value and cost then
-		exports.global:giveItem(thePlayer, tonumber(itemID), tonumber(value))
+
+		itemID = tonumber(itemID)
+		value = tonumber(value)
+
+		-- if exports["interior-system"]:isRentingAt(thePlayer, tonumber(value)) then
+		-- 	outputChatBox("Uh oh! Duplcating a key to a property that you are renting is against the rules!", thePlayer,255,0,0)
+		-- 	return
+		-- end
+		exports.global:giveItem(thePlayer, itemID, value)
 		exports.global:takeMoney(thePlayer, cost)
+
+		local validKeys = {
+			[4] = "door key",
+			[5] = "door key",
+			[73] = "door key",
+			[3] = "vehicle key",
+			[98] = "garage remote",
+			[151] = "ramp remote",
+		}
+		local kt = validKeys[itemID]
+
+		triggerEvent('sendAme', thePlayer, "hands "..pedName.." some dollar bills.")
+		exports.global:sendLocalText(thePlayer, "* " .. tostring(pedName) .. " gives "..tostring(getPlayerName(thePlayer)):gsub("_"," ").." a shiny new "..kt..".", 255, 51, 102, 30, {}, true)
+
 	end
 end
 addEvent("locksmithNPC:givekey", true)
 addEventHandler("locksmithNPC:givekey", resourceRoot, giveDuplicatedKey)
-
-function getFactionInteriors()
-	local factionInteriors = {}
-	local possibleInteriors = exports.pool:getPoolElementsByType("interior")
-
-	for key, interior in pairs(possibleInteriors) do
-		for i, k in pairs(getElementData(client, "faction")) do
-			if exports.factions:hasMemberPermissionTo(client, i, "manage_interiors") then
-				if getElementData(interior, "status").faction == i then
-					table.insert(factionInteriors, getElementData(interior, "dbid"))
-				end
-			end	
-		end
-	end
-	triggerClientEvent("locksmithNPC:setFactionInteriors", client, factionInteriors)
-end
-addEvent("locksmithNPC:getFactionInts", true)
-addEventHandler("locksmithNPC:getFactionInts", resourceRoot, getFactionInteriors)
-

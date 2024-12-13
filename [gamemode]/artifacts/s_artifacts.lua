@@ -1,298 +1,277 @@
--- Script: artifacts
--- Description: Handles artifacts (things players can wear that are not clothes)
--- Server-Side
--- Created by Exciter for Owl Gaming, 15.05.2014 (DD/MM/YYYY)
--- Thanks to Adams, iG Scripting Team and RPP Scripting Team for their base work.
--- License: BSD
+-- Fernando: 18/05/2021
+-- support for infinite objects
+-- major artifacts revamp
 
-addEvent('artifacts:removeAllOnPlayer', true)
-addEvent('artifacts:add', true)
-addEvent('artifacts:remove', true)
-addEvent('artifacts:toggle', true)
---addEvent('artifacts:update', true)
+addEvent('artifacts:hideOnPlayer', true)--set alpha to 0
+addEvent('artifacts:showOnPlayer', true)-- set alpha back to 255
 
-local root = getRootElement()
-local artifacts = {}
-local artifactsList = {}
-local texturedArtifacts = {}
+addEvent('artifacts:hideAllOnPlayer', true)--set alpha to 0
+addEvent('artifacts:showAllOnPlayer', true)-- set alpha back to 255
 
-function removeAllOnPlayer(player) --Remove all artifacts on a given player
-	if artifactsList[player] then
-		--triggerClientEvent(player, 'artifacts:startChecking', player, false)
-		for k,v in pairs(artifactsList[player]) do
-			if(isElement(v[2])) then
-				destroyElement(v[2])
-				artifacts[player][v[1]] = nil
-			end
+addEvent('artifacts:removeAllOnPlayer', true) -- remove all artifacts wearing
+
+addEvent("artifacts:syncPositions", true) -- sync client saved positions to server
+
+addEvent('artifacts:add', true)-- add 1
+addEvent('artifacts:remove', true)--remove 1
+addEvent('artifacts:toggle', true)--add/remove
+
+local artifacts = {} -- [player][artifact] = obj, visible
+local playerPositions = {} -- [player][skinid][artifact] = {x, y, z, rx, ry, rz, scale}
+
+local farX, farY, farZ = 2937.111328125, 2929.818359375, 14.88894367218--far away in LV
+
+function removeAllOnPlayer(player, readd)
+	--Remove all artifacts on a given player
+	exports.pAttach:detachAll(player)
+	for artifact, v in pairs(artifacts[player] or {}) do
+		if(isElement(v.obj)) then
+			destroyElement(v.obj)
+			artifacts[player][artifact] = nil
 		end
-		artifacts[player] = nil
-		artifactsList[player] = nil
+	end
+
+	-- outputServerLog("All artifacts removed from "..getPlayerName(player))
+	artifacts[player] = {}
+	syncPlayerArtifacts(player)
+
+	if readd then
+		setTimer(function()
+			triggerEvent("item-system:addPlayerArtifacts", player, player)
+		end, 500, 1)
 	end
 end
-addEventHandler('artifacts:removeAllOnPlayer', root, removeAllOnPlayer)
+addEventHandler('artifacts:removeAllOnPlayer', getRootElement(), removeAllOnPlayer)
 
-addCommandHandler("myartifacts", function(player, cmd)
-	if artifactsList[player] and #artifactsList[player] > 0 then
-		outputChatBox("--",player)
-		for k,v in pairs(artifactsList[player]) do
-			outputChatBox(tostring(v[1]),player)
+function hideAllOnPlayer(player)
+	for artifact, v in pairs(artifacts[player] or {}) do
+		if (isElement(v.obj) and (not v.invisible)) and (not v.hidden) then--not hidden by player on purpose already
+			hideOnPlayer(player, artifact)
 		end
-		outputChatBox(tostring(#artifactsList[player]).." items worn.",player)
-		outputChatBox("--",player)
-	else
-		outputChatBox("You are not wearing any artifacts.",player)
 	end
-end)
+end
+addEventHandler('artifacts:hideAllOnPlayer', getRootElement(), hideAllOnPlayer)
 
-function addArtifact(player, artifact, noOutput, customItemTexture) --Start to wear an artifact the player is not already wearing
-	if client and player ~= client then return end -- SECURITY FIX: If client sends this event, only allow them to send the artifact for themselves.
-	if player and artifact then	
+function showAllOnPlayer(player)
+	for artifact, v in pairs(artifacts[player] or {}) do
+		if ((v.invisible)) and (not v.hidden) then--not hidden by player on purpose already
+			showOnPlayer(player ,artifact)
+		end
+	end
+end
+addEventHandler('artifacts:showAllOnPlayer', getRootElement(), showAllOnPlayer)
+
+function hideOnPlayer(player, artifact)
+	if not artifacts[player] then return end
+	local a = artifacts[player][artifact]
+	if not a then return end
+
+	if (isElement(a.obj) and (not a.invisible)) and (not a.hidden) then--not hidden by player on purpose already
+		exports.pAttach:detach(a.obj)
+		destroyElement(a.obj)
+		artifacts[player][artifact].invisible = {a.customTex, a.itemName} -- save this to re-add later
+	end
+end
+addEventHandler('artifacts:hideOnPlayer', getRootElement(), hideOnPlayer)
+
+function showOnPlayer(player ,artifact)
+	if not artifacts[player] then return end
+	local a = artifacts[player][artifact]
+	if not a then return end
+
+	if ((a.invisible)) and (not a.hidden) then--not hidden by player on purpose already
+		local customItemTexture, itemName = unpack(a.invisible)
+		artifacts[player][artifact] = nil -- clear to readd
+		addArtifact(player, artifact, customItemTexture, itemName)
+	end
+end
+addEventHandler('artifacts:showOnPlayer', getRootElement(), showOnPlayer)
+
+
+function addArtifact(player, artifact, customItemTexture, itemName)
+	--Start to wear an artifact the player is not already wearing
+	if player and artifact then
 		if artifacts[player] and artifacts[player][artifact] then
-			--outputDebugString("artifacts/s_artifacts.lua: Player "..tostring(getPlayerName(player)).." is already wearing "..tostring(artifact)..".")
 			return
 		else
 			--get artifact data
 			local data = g_artifacts[artifact]
-			local skin = getElementModel(player)
-			--local skinSpecifics = getSkinSpecificArtifactData(artifact, skin)
-			--if skinSpecifics then
-			--	data = skinSpecifics
-			--end
-			if(g_skinSpecifics[artifact]) then
-				if(g_skinSpecifics[artifact][skin]) then
-					data = g_skinSpecifics[artifact][skin]
+			if not data then
+				print("Unknown artifact: "..artifact)
+				return false
+			end
+
+			local x,y,z = getElementPosition(player)
+			local object = createObject(default_obj, farX, farY, farZ)
+			setElementData(object, "artifact:name", artifact)
+
+			setElementData(object, "sarp_items:artifact", artifact)
+			if not data.colEnabled then
+				setElementCollisionsEnabled(object, false)
+			else
+				setElementCollisionsEnabled(object, true)
+			end
+			setElementDoubleSided(object, data.ds)
+			setElementInterior(object, getElementInterior(player))
+			setElementDimension(object, getElementDimension(player))
+
+			local x,y,z,rx,ry,rz = unpack(data.pos)
+			local scale = data.scale
+
+			local isHidden = false
+
+			local playerPos = playerPositions[player]
+			if playerPos then
+				local skinID = getElementData(player, "skinID") or getElementModel(player)
+				local forSkin = playerPos[skinID]
+				if forSkin then
+					local thisPos = forSkin[artifact]
+					if thisPos then
+						x,y,z,rx,ry,rz,scale,hidden = unpack(thisPos)
+						-- outputChatBox("Loaded saved position for "..artifact..".", player,0,255,0)
+
+						if hidden then
+							isHidden = skinID
+						end
+					end
 				end
 			end
-			local x, y, z = getElementPosition(player)
-			--local int = getElementInterior(player)
-			--local dim = getElementDimension(player)
-			local object = createObject(data[ART_MODEL], x, y, z)
-			--setElementInterior(object, int)
-			--setElementDimension(object, dim)
-			setObjectScale(object, data[ART_SCALE])
-			setElementDoubleSided(object, data[ART_DOUBLESIDED])
-			exports.bone_attach:attachElementToBone(object,player,data[ART_BONE],data[ART_X],data[ART_Y],data[ART_Z],data[ART_RX],data[ART_RY],data[ART_RZ])
-			--triggerClientEvent(player, 'artifacts:startChecking', player, true)
+
+			setObjectScale(object, scale)
+			-- outputChatBox("Add "..artifact, player)
+
 			if not artifacts[player] then
 				artifacts[player] = {}
 			end
-			if not artifactsList[player] then
-				artifactsList[player] = {}
-			end
-			artifacts[player][artifact] = object
-			table.insert(artifactsList[player], {artifact,object})
-			--setElementData(player, "artifact.wearing."..tostring(artifact), true)
-			if exports.global:isResourceRunning( 'item-texture' ) then
-				if data[ART_TEXTURE] then
-					--table.insert(texturedArtifacts, {object, data[ART_TEXTURE]})
-					--triggerClientEvent("artifacts:addTexture", player, object, data[ART_TEXTURE])
-					for k,v in ipairs(data[ART_TEXTURE]) do
-						exports["item-texture"]:addTexture(object, v[2], v[1])
-					end
+
+			artifacts[player][artifact] = {}
+			artifacts[player][artifact].obj = object
+			artifacts[player][artifact].hidden = isHidden
+			
+			artifacts[player][artifact].itemName = itemName
+
+			if isHidden then
+				destroyElement(object)
+				triggerClientEvent(player, "displayMesaage", player, "Your "..(itemName or artifact).." is hidden for skin #"..isHidden..".", "info")
+			else
+				if not exports.pAttach:attach(object, player, data.bone,x,y,z,rx,ry,rz) then
+					destroyElement(object)
+					artifacts[player][artifact] = nil
+					return
+				end
+				
+				for k, player in ipairs(getElementsWithinRange(x,y,z, 100, "player", getElementInterior(player), getElementDimension(player))) do
+					triggerClientEvent(player, "loadArtifactObject", object)
+				end
+
+				local texture = data.texture
+				local texname = data.texname
+
+					-- defined in g_artifacts
+				if texture and texname then
+					exports["item-texture"]:addTexture(object, texname, texture)
+					-- from item-system metadata
 				elseif customItemTexture then
 					if type(customItemTexture) == "table" then
-						for k,v in ipairs(customItemTexture) do
-							exports["item-texture"]:addTexture(object, v[2], v[1])
-						end					
+						exports["item-texture"]:addTexture(object, customItemTexture[2], customItemTexture[1])
+						artifacts[player][artifact].customTex = customItemTexture
 					end
 				end
 			end
-			
-			if not noOutput and g_artifacts_mes[artifact] and g_artifacts_mes[artifact][1] then
-				exports.global:sendLocalMeAction(player, tostring(g_artifacts_mes[artifact][1]))
-			end
+
+			syncPlayerArtifacts(player)
 		end
 	end
 end
-addEventHandler('artifacts:add', root, addArtifact)
+addEventHandler('artifacts:add', getRootElement(), addArtifact)
 
-function removeArtifact(player, artifact, noOutput) --Removing an artifact the player is wearing
-	if client and player ~= client then return end -- SECURITY FIX: If client sends this event, only allow them to send the artifact for themselves.
-	if player and artifact then	
+function removeArtifact(player, artifact)
+	--Removing an artifact the player is wearing
+	if player and artifact then
 		if not artifacts[player] or not artifacts[player][artifact] then
-			--outputDebugString("artifacts/s_artifacts.lua: Player "..tostring(getPlayerName(player)).." is not wearing "..tostring(artifact)..".")
 			return
 		else
-			--if(#artifacts[player] <= 1) then --stop the int/dim checking when there is no need for it anymore (when player is not wearing any artifacts)
-				--triggerClientEvent(player, 'artifacts:startChecking', player, false)
-			--end
-			destroyElement(artifacts[player][artifact])
+			local obj = artifacts[player][artifact].obj
+			if isElement(obj) then
+				exports.pAttach:detach(obj)
+    			destroyElement(obj)
+			end
 			artifacts[player][artifact] = nil
-			for k,v in pairs(artifactsList[player]) do
-				if(v[1] == artifact) then
-					v = nil
-					artifactsList[player][k] = nil
-					break
-				end
-			end
-			--setElementData(player, "artifact.wearing."..tostring(artifact), false)
-			if not noOutput and g_artifacts_mes[artifact] and g_artifacts_mes[artifact][2] then
-				exports.global:sendLocalMeAction(player, tostring(g_artifacts_mes[artifact][2]))
-			end
+
+			syncPlayerArtifacts(player)
 		end
 	end
 end
-addEventHandler('artifacts:remove', root, removeArtifact)
+addEventHandler('artifacts:remove', getRootElement(), removeArtifact)
 
-function toggleArtifact(player, artifact, noOutput) --Used for toggling an artifact, independent on current state. This is what you for example want to use from item-system when clicking an item to wear or take off
-	if player and artifact then	
+function toggleArtifact(player, artifact, customItemTexture, itemName)
+	--Used for toggling an artifact, independent on current state.
+	-- This is what you for example want to use from item-system
+	-- when clicking an item to wear or take off
+
+	if player and artifact then
 		if not artifacts[player] or not artifacts[player][artifact] then
-			addArtifact(player, artifact, noOutput)
+			addArtifact(player, artifact, customItemTexture, itemName)
 		else
-			removeArtifact(player, artifact, noOutput)
+			removeArtifact(player, artifact)
 		end
 	end
 end
-addEventHandler('artifacts:toggle', root, toggleArtifact)
+addEventHandler('artifacts:toggle', getRootElement(), toggleArtifact)
 
---[[addEventHandler('artifacts:update', root,
-function(player, newInt, newDim) --This is used by the client-side int/dim change check, to update the int/dim of all attached artifacts when player changes int/dim
-	if artifacts[player] then
-		for k,v in pairs(artifacts[player]) do
-			if(isElement(v)) then
-				setElementInterior(v, newInt)
-				setElementDimension(v, newDim)
-			end
-		end
-		--artifacts[player] = nil
+function checkFloatingArtifacts()
+	if getElementType(source)=="player" then
+		removeAllOnPlayer(source)
 	end
-end)]]
-
+end
 --When to remove all objects from a player:
-addEventHandler("onPlayerQuit", root,
-function()
-	removeAllOnPlayer(source)
-end)
---[[ This was replaced with an actual working trigger from account-system/s_characters.lua
-addEventHandler("accounts:characters:change", root, removeAllOnPlayer)
---]]
+addEventHandler("onCharacterLogout", getRootElement(), checkFloatingArtifacts)
+addEventHandler("onPlayerQuit", getRootElement(), checkFloatingArtifacts)
 
-addCommandHandler("removeartifacts", function(player, cmd)
-	local num = #artifactsList[player]
-	removeAllOnPlayer(player)
-	outputChatBox(tostring(num).." artifacts removed.",player)
-end)
+function getPlayerArtifacts(player)
+	-- returns a table of all articrafts the player is wearing
+	-- (table contains the IDs of the artifacts worn as strings)
 
-function countPlayerArtifacts(player) --returns a number of how many artifacts the player is currently wearing
-	local count = 0
-	if artifacts[player] then
-		for k,v in pairs(artifacts[player]) do
-			if(isElement(v)) then
-				count = count + 1
-			end
-		end
-	end
-	return count
-end
-function getPlayerArtifacts(player, withElements) --returns a table of all articrafts the player is wearing (table contains the IDs of the artifacts worn as strings, ref. g_artifacts list)
-	local resultTable = {}
 	local tableWithElements = {}
+
 	if artifacts[player] then
-		for k,v in pairs(artifacts[player]) do
-			if(isElement(v)) then
-				table.insert(resultTable, k)
-				table.insert(tableWithElements, {v,k})
+		for name, v in pairs(artifacts[player]) do
+			if(isElement(v.obj)) then
+				tableWithElements[name] = v.obj
 			end
 		end
 	end
-	if withElements then
-		return tableWithElements
-	end
-	return resultTable
+
+	return tableWithElements
 end
-function isPlayerWearingArtifact(player, artifact) --returns boolean wether player is wearing the specified artifact or not (may be useful as an exported function)
-	if artifacts[player] and artifacts[player][artifact] and isElement(artifacts[player][artifact]) then
+
+function syncPlayerArtifacts(player)
+	-- so the client knows which artifacts people are wearing directly
+	for k, pl in ipairs(getElementsByType("player")) do
+		triggerClientEvent(pl, "syncWearingArtifacts", pl, player, artifacts[player] or {})
+	end
+end
+
+function isPlayerWearingArtifact(player, artifact)
+	--returns boolean wether player is wearing the specified artifact or not
+	if artifacts[player] and artifacts[player][artifact] and isElement(artifacts[player][artifact].obj) then
 		return true
 	end
 	return false
 end
-function setPlayerArtifactProperty(player, artifact, property, value) --exported function to let other scripts change things about a worn artifact (adjust position, change model, change bone, etc.)
-	if artifacts[player] and artifacts[player][artifact] and isElement(artifacts[player][artifact]) then
-		local object = artifacts[player][artifact]
-		if(property == "model") then
-			local result = setElementModel(object, value)
-			return result
-		elseif(property == "scale") then
-			local result = setObjectScale(object, value)
-			return result
-		elseif(property == "alpha") then
-			local result = setElementAlpha(object, value)
-			return result
-		elseif(property == "doublesided") then
-			local result = setElementDoubleSided(object, value)
-			return result
-		elseif(property == "texture") then
-			if value then
-				table.insert(texturedArtifacts, {object, value})
-				triggerClientEvent("artifacts:addTexture", player, object, value)
-				return true
-			else
-				return false
-			end
-		elseif(property == "bone") then
-			local ped, bone, x, y, z, rx, ry, rz = exports.bone_attach:getElementBoneAttachmentDetails(object)
-			exports.bone_attach:detachElementFromBone(object)
-			local result = exports.bone_attach:attachElementToBone(object,ped,value,x,y,z,rx,ry,rz)
-			if not result then
-				exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,rz)
-			end
-			return result
-		elseif(property == "x") then
-			local ped, bone, x, y, z, rx, ry, rz = exports.bone_attach:getElementBoneAttachmentDetails(object)
-			exports.bone_attach:detachElementFromBone(object)
-			local result = exports.bone_attach:attachElementToBone(object,ped,bone,(x+value),y,z,rx,ry,rz)
-			if not result then
-				exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,rz)
-			end
-			return result
-		elseif(property == "y") then
-			local ped, bone, x, y, z, rx, ry, rz = exports.bone_attach:getElementBoneAttachmentDetails(object)
-			exports.bone_attach:detachElementFromBone(object)
-			local result = exports.bone_attach:attachElementToBone(object,ped,bone,x,(y+value),z,rx,ry,rz)
-			if not result then
-				exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,rz)
-			end
-			return result
-		elseif(property == "z") then
-			local ped, bone, x, y, z, rx, ry, rz = exports.bone_attach:getElementBoneAttachmentDetails(object)
-			exports.bone_attach:detachElementFromBone(object)
-			local result = exports.bone_attach:attachElementToBone(object,ped,bone,x,y,(z+value),rx,ry,rz)
-			if not result then
-				exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,rz)
-			end
-			return result
-		elseif(property == "rx") then
-			local ped, bone, x, y, z, rx, ry, rz = exports.bone_attach:getElementBoneAttachmentDetails(object)
-			exports.bone_attach:detachElementFromBone(object)
-			local result = exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,(rx+value),ry,rz)
-			if not result then
-				exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,rz)
-			end
-			return result
-		elseif(property == "ry") then
-			local ped, bone, x, y, z, rx, ry, rz = exports.bone_attach:getElementBoneAttachmentDetails(object)
-			exports.bone_attach:detachElementFromBone(object)
-			local result = exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,(ry+value),rz)
-			if not result then
-				exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,rz)
-			end
-			return result
-		elseif(property == "rz") then
-			local ped, bone, x, y, z, rx, ry, rz = exports.bone_attach:getElementBoneAttachmentDetails(object)
-			exports.bone_attach:detachElementFromBone(object)
-			local result = exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,(rz+value))
-			if not result then
-				exports.bone_attach:attachElementToBone(object,ped,bone,x,y,z,rx,ry,rz)
-			end
-			return result
-		elseif(property == "reset") then
-			removeArtifact(player, artifact, true)
-			addArtifact(player, artifact, true)
-		end
-	end
-	return false
-end
 
---[[ TODO:
-- Add support for limiting how many artifacts you can wear, for example limiting to 1 artifact per bone at a time
---]]
+function syncPlayerPositions(player, tab)
+	playerPositions[player] = tab
+end
+addEventHandler("artifacts:syncPositions", root, syncPlayerPositions)
+
+-- addCommandHandler("testweapon", function(player)
+-- 	if not exports.integration:isPlayerScripter(player) then return end
+--     local object = createObject(356, 0, 0, 0)
+--     exports.pAttach:attach(object, player, "weapon", 0, 0, 0, 0, 0, 0)
+-- end)
+-- addCommandHandler("testbackpack", function(player)
+-- 	if not exports.integration:isPlayerScripter(player) then return end
+--     local object = createObject(371, 0, 0, 0)
+--     exports.pAttach:attach(object, player, "backpack", 0, -0.15, 0, 90, 0, 0)
+-- end)

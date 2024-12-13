@@ -1,27 +1,27 @@
---[[
-* ***********************************************************************************************************************
-* Copyright (c) 2015 OwlGaming Community - All Rights Reserved
-* All rights reserved. This program and the accompanying materials are private property belongs to OwlGaming Community
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* ***********************************************************************************************************************
-]]
+-- Fernando: 18/05/2021
 
 items = exports['item-system']
-function createItem(id, itemID, itemValue, ...)
-	local o = createObject(...)
+function createItem(id, itemID, itemValue, modelid, x, y, z, rx, ry, rz, specialObject)
+	local o = createObject(modelid, x, y, z, rx, ry, rz)
 	if o then
 		anticheat:changeProtectedElementDataEx(o, "id", id)
 		anticheat:changeProtectedElementDataEx(o, "itemID", itemID)
 		anticheat:changeProtectedElementDataEx(o, "itemValue", itemValue, itemValue ~= 1)
+		if modelid == 1581 then
+			setObjectScale(o, 1.9)
+		elseif modelid == 1937 then
+			setObjectScale(o, 1.1)
+		end
+		if specialObject and type(specialObject)=="string" then
+			setElementData(o, "sarp_items:artifact", specialObject)
+			local scale = exports.artifacts:getArtifactScale(specialObject)
+			setObjectScale(o, scale or 1)
+		end
 
 		return o
 	else
-		if dbExec(mysql:getConn(), "DELETE FROM `worlditems` WHERE `id` = ?", id) then
-			outputDebugString("Deleted bugged Item ID #"..id)
-		else
-			outputDebugString("Failed to delete bugged Item ID #"..id)
-		end
+		-- dbExec(mysql:getConn('mta'), "DELETE FROM `worlditems` WHERE `id` = ?", id)
+		outputDebugString("Worlditem ID "..id.." because object failed to create", 1)
 		return false
 	end
 end
@@ -29,7 +29,7 @@ end
 function updateItemValue(element, newValue)
 	if getElementParent(getElementParent(element)) == getResourceRootElement(getThisResource()) then
 		local id = tonumber(getElementData(element, "id")) or 0
-		if dbExec(mysql:getConn(), "UPDATE `worlditems` SET `itemvalue`=? WHERE `id`=?",newValue,id) then
+		if dbExec(mysql:getConn('mta'), "UPDATE `worlditems` SET `itemvalue`=? WHERE `id`=?",newValue,id) then
 			anticheat:changeProtectedElementDataEx(element, "itemValue", newValue)
 			return true
 		end
@@ -43,7 +43,7 @@ function setData(element, key, value)
 		local metadata = getElementData(element, "metadata") or {}
 		metadata[key] = value
 
-		if dbExec(mysql:getConn(), "UPDATE `worlditems` SET `metadata`=? WHERE `id`=?", toJSON(metadata), id) then
+		if dbExec(mysql:getConn('mta'), "UPDATE `worlditems` SET `metadata`=? WHERE `id`=?", toJSON(metadata), id) then
 			--anticheat:changeProtectedElementDataEx(element, "worlditemData."..tostring(key), value)
 			anticheat:changeProtectedElementDataEx(element, "metadata", metadata)
 			return true
@@ -102,38 +102,46 @@ function getPermissionsFromDB(element)
 	return permissions
 end
 
-local function sqlDeleteObject( dbid )
-	
-end
 
--- delete an object by dbid, return true of deleted something, false otherwise.
-function deleteOne( dbid, no_sql ) 
-	local destroyed = false
-	local object = exports.pool:getElement( 'object', dbid )
-	if object then
-		destroyed = destroyElement( object ) 
-		if destroyed and not no_sql then
-			dbExec( exports.mysql:getConn(), "DELETE FROM worlditem WHERE id=? ", dbid )
-		end
-	end
-	return destroyed
-end
+-- called from item-system // Fernando
 
 -- nil value will delete all itemss with given itemId, return number of objects deleted.
-function deleteAll( id, value, no_sql ) 
+function deleteAll( id, value, no_sql )
 	local count = 0
 	for k, o in pairs( getElementsByType( "object", resourceRoot ) ) do
 		local id_ = getElementData( o, "itemID" )
 		if id_ == id then
 			local value_ = getElementData( o, "itemValue" )
 			if not value or ( tonumber(value) or value ) == ( tonumber(value_) or value_ ) then
+
+				local metadata = getElementData(o, "metadata") or {}
+				for k,v in pairs(metadata) do
+					if k == "url" then
+						exports["item-texture"]:unCacheTexture(v)
+					end
+				end
+
 				destroyElement( o )
 				count = count + 1
 			end
 		end
 	end
 	if count > 0 and not no_sql then
-		dbExec( exports.mysql:getConn(), "DELETE FROM worlditems WHERE itemid=? "..( value and "AND itemvalue=? " or "" ) , id, value or nil )
+		-- dbExec( exports.mysql:getConn('mta'), "DELETE FROM worlditems WHERE itemid=? "..( value and "AND itemvalue=? " or "" ) , id, value or nil )
+		dbExec( exports.mysql:getConn('mta'), "UPDATE worlditems SET deleted=1, deletedDate=NOW(), deletedReason='deleteAll' WHERE itemid=? "..( value and "AND itemvalue=? " or "" ) , id, value or nil )
 	end
 	return count
 end
+
+
+-- Fernando: Recover soft-deleted worlditem
+function restoreDeletedWorlditem(id)
+
+
+	local result = false
+
+	--todo
+
+	return result
+end
+

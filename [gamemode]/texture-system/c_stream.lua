@@ -1,9 +1,149 @@
 savedTextures = {}
 loaded = {}
-local streaming = {}
+streaming = {}
 
-local function getPath(url)
-	return '@cache/' .. md5(tostring(url)) .. '.tex'
+local fileNames = {}
+local errorLoading = false
+
+-- store encrypted file names so they can be used in case of needing to clear cache
+function encryptFileNameClient(url)
+	local new = sha256(tostring(url))
+	if new then addFilenameToList(new) end
+	return new
+end
+
+function addFilenameToList(name)
+
+	if errorLoading then return end
+	fileNames[name] = true
+end
+
+addEventHandler( "onClientResourceStop", resourceRoot,
+function ()
+	-- Save the file names list to file
+	local file
+	if not fileExists(listFilePath) then
+		file = xmlCreateFile(listFilePath, rootNodeName)
+	else
+		file = xmlLoadFile(listFilePath)
+	end
+	if not file then
+
+		return print("Error(2) opening file: "..listFilePath)
+	end
+
+	local names = xmlNodeGetChildren(file)
+	if not names then
+		return print("Error(2) getting file names on parent: "..rootNodeName)
+	end
+
+	-- Don't add to the file those already there
+	for i,n in pairs(names) do
+		local nn = xmlNodeGetName(n)
+    	if tostring(nn) == tostring(entryNodeName) then
+    		local nv = tostring(xmlNodeGetValue(n))
+    		if fileNames[nv] then
+    			fileNames[nv] = nil
+    		end
+    	end
+	end
+
+	for fileName,_  in pairs(fileNames) do
+		local newEntry = xmlCreateChild(file, entryNodeName)
+	    if not newEntry then
+	    	break
+	    end
+	    xmlNodeSetValue(newEntry, fileName)
+    end
+
+    xmlSaveFile(file)
+    xmlUnloadFile(file)
+end)
+
+
+addEventHandler( "onClientResourceStart", resourceRoot,
+function()
+	-- Load saved file names into Lua table
+
+	local file
+	if not fileExists(listFilePath) then
+		file = xmlCreateFile(listFilePath, rootNodeName)
+	else
+		file = xmlLoadFile(listFilePath)
+	end
+	if not file then
+
+		errorLoading = true
+		return print("Error(1) opening file: "..listFilePath)
+	end
+
+    local names = xmlNodeGetChildren(file)
+    if not names then
+    	errorLoading = true
+    	xmlUnloadFile(file)
+		return print("Error(1) getting file names on parent: "..rootNodeName)
+    end
+
+    local count = 0
+    for k, n in pairs(names) do
+    	local nn = xmlNodeGetName(n)
+    	if tostring(nn) == tostring(entryNodeName) then
+    		local nv = tostring(xmlNodeGetValue(n))
+    		if nv then
+    			local fn = string.format(cacheFileName, nv)
+    			if not fileExists(fn) then
+	    			xmlDestroyNode(n)
+	    		else
+	    			fileNames[nv] = true
+	    			count = count +1
+	    		end
+    		else
+	    		xmlDestroyNode(n)
+	    	end
+    	else
+	    	xmlDestroyNode(n)
+	    end
+    end
+
+    xmlSaveFile(file)
+    xmlUnloadFile(file)
+
+    -- print("[texture-system] Found "..count.." cached files.")
+end)
+
+function flushTextureSystemCache()
+
+	-- Deletes all cached files
+	local count = 0
+	for fileName,_ in pairs(fileNames) do
+		local fn = string.format(cacheFileName, fileName)
+		if fileExists(fn) then
+			fileDelete(fn)
+			fileNames[fileName] = nil
+			count = count + 1
+		end
+	end
+	-- remove all current textures
+	for k, v in pairs(loaded) do
+		engineRemoveShaderFromWorldTexture(v.shader, v.texname)
+		destroyElement(getElementData(v.texture, "window") or v.texture)
+		destroyElement(v.shader)
+	end
+	loaded = {}
+	streaming = {}
+	savedTextures = {}
+
+	outputChatBox("Flushed "..count.." loaded interior textures.", 0,255,0)
+
+	triggerLatentServerEvent('frames:loadInteriorTextures', localPlayer, getElementDimension(localPlayer))
+end
+addEvent("texture-system:flush_client", true)
+addEventHandler("texture-system:flush_client", root, flushTextureSystemCache)
+addCommandHandler("flush", flushTextureSystemCache, false, false)
+
+
+function getPath(url)
+	return string.format(cacheFileName, encryptFileNameClient(url))
 end
 
 function addTexture(id)
@@ -28,7 +168,7 @@ function addTexture(id)
 
 				engineApplyShaderToWorldTexture(shader, texName)
 
-				loaded[id] = { texture = texture, shader = shader }
+				loaded[id] = { texture = texture, shader = shader, texname = texName }
 			else
 				outputDebugString('creating shader for tex ' .. data.texture .. ' failed.', 2)
 				destroyElement(texture)
@@ -53,7 +193,7 @@ function addTexture(id)
 				local texName = data.texture
 				engineApplyShaderToWorldTexture(shader, texName)
 
-				loaded[id] = { texture = texture, shader = shader }
+				loaded[id] = { texture = texture, shader = shader, texname = texName }
 			else
 				outputDebugString('creating shader for tex ' .. data.texture .. ' failed.', 2)
 				destroyElement(texture)
@@ -64,7 +204,8 @@ function addTexture(id)
 	else
 		if not streaming[id] then
 			streaming[id] = true
-			triggerServerEvent('frames:stream', resourceRoot, dimension, id)
+			-- triggerServerEvent('frames:stream', resourceRoot, dimension, id)
+			triggerLatentServerEvent('frames:stream', resourceRoot, dimension, id)
 		end
 	end
 end
@@ -77,6 +218,7 @@ addEventHandler('frames:list', resourceRoot,
 
 		-- remove all current textures
 		for k, v in pairs(loaded) do
+			engineRemoveShaderFromWorldTexture(v.shader, v.texname)
 			destroyElement(getElementData(v.texture, "window") or v.texture)
 			destroyElement(v.shader)
 		end
@@ -105,22 +247,13 @@ addEventHandler( 'frames:file', resourceRoot,
 		end
 	end, false)
 
-addEvent('frames:highlightTexture', true)
-addEventHandler('frames:highlightTexture', localPlayer,
-	function(id)
-		local v = loaded[id]
-		if v then
-			local placeholdertexture = dxCreateTexture("browser_placeholder.jpg", "argb", true, "clamp", "2d", 1)
-			dxSetShaderValue(v.shader, 'Tex0', placeholdertexture)
-		end
-	end)
-
-
 addEvent('frames:removeOne', true)
 addEventHandler('frames:removeOne', resourceRoot,
-	function(interior, id)
+	function(interior, id, texName)
+
 		local v = loaded[id]
 		if v then
+			engineRemoveShaderFromWorldTexture(v.shader, v.texname)
 			destroyElement(getElementData(v.texture, "window") or v.texture)
 			destroyElement(v.shader)
 
@@ -128,25 +261,23 @@ addEventHandler('frames:removeOne', resourceRoot,
 		end
 
 		local data = savedTextures[interior]
-		if data then
+		if data and not texName then
 			data[id] = nil
 		end
-	end, false)
 
+		if texName then
+			-- apply preview
+			engineApplyShaderToWorldTexture ( hlReplacement, texName )
+			hl = dxCreateTexture ( "files/hl.png" )
 
-addEvent('frames:removeAll', true)
-addEventHandler('frames:removeAll', resourceRoot,
-	function(interior)
-		local dimension = getElementDimension(localPlayer)
-		local data = savedTextures[dimension]
-		for k, v in pairs (data) do 
-			local t = loaded[v.id]
-			destroyElement(getElementData(t.texture, "window") or t.texture)
-			destroyElement(t.shader)
-			loaded[v.id] = nil
-			data[k] = nil
+			if hl then
+				dxSetShaderValue ( hlReplacement, "Tex0", hl )
+				hlTexname = texName
+				hlTexID = tonumber(id)
+
+				triggerEvent("displayMesaage", localPlayer, "Highlighting texture:  "..texName, "success")
+			end
 		end
-
 	end, false)
 
 addEvent('frames:addOne', true)

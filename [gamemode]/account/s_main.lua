@@ -95,5 +95,5 @@ addEvent("resetName", true )
 addEventHandler("resetName", getRootElement(), resetNick)
 
 function makeOwlName(thePlayer)
-	setPlayerName(thePlayer, "Owl.Player."..tostring(math.random(0,9))..tostring(math.random(0,9))..tostring(math.random(0,9))..tostring(math.random(0,9)))
+	setPlayerName(thePlayer, "Quantum.Player."..tostring(math.random(0,9))..tostring(math.random(0,9))..tostring(math.random(0,9))..tostring(math.random(0,9)))
 end

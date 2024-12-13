@@ -13,7 +13,7 @@ function getRandomName(type, gender) --type: "first","last","full","gender" or n
 	local genders = {
 	"male",
 	"female"
-	}	
+	}
 	local males = {
 	"John",
 	"Will",
@@ -50,7 +50,7 @@ function getRandomName(type, gender) --type: "first","last","full","gender" or n
 	"Alex",
 	"Alexander",
 	"William"
-	}	
+	}
 	local females = {
 	"Rebecca",
 	"Eva",
@@ -95,7 +95,7 @@ function getRandomName(type, gender) --type: "first","last","full","gender" or n
 	"Pamela",
 	"Jaqueline",
 	"Elliot"
-	}	
+	}
 	local lastnames = {
 	"Goldsmith",
 	"Carter",
@@ -155,7 +155,7 @@ function getRandomName(type, gender) --type: "first","last","full","gender" or n
 	"White",
 	"Crawford",
 	"Robinson"
-	}	
+	}
 	if not type then
 		type = "full"
 	end

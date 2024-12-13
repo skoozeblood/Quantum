@@ -245,6 +245,8 @@ function useItem(itemSlot, additional)
 					fits = true
 				end
 			end
+			--print (clothingid,skin,skin_id,gender,fits,race)
+			--print (inspect(skinTable))
 			if clothingid or fits then
 				setElementModel(source, skin)
 				exports.anticheat:setEld(source, "clothing:id", clothingid, 'all')

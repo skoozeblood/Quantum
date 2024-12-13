@@ -33,7 +33,7 @@ local SCOREBOARD_COLUMNS_WIDTH		= { 0.08, 0.59, 0.15, 0.14, 0.04 }	-- Relative w
 local SCOREBOARD_ROW_GAP			= 1							-- Gap between rows
 
 --[[ Uncomment to test with dummies ]]--
---[[
+--
 local _getPlayerName = getPlayerName
 local _getPlayerPing = getPlayerPing
 local _getPlayerNametagColor = getPlayerNametagColor
@@ -52,7 +52,7 @@ function getPlayerNametagColor ( player )
 	if getElementType ( player ) == "player" then return _getPlayerNametagColor ( player )
 	else return unpack(getElementData(player, "color")) end
 end
---]]
+
 
 
 --[[ Global variables to this context ]]--

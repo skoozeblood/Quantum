@@ -1,0 +1,31 @@
+<meta>
+	<info name="MTA Snow Andreas" author="Liberty, Dutchman101" version="1.0.4" type="script" />
+
+	<script src="client.lua" type="client" />
+
+	<file src="data/shaders/texRep.fx" type="client"/>
+	<file src="data/textures/road.png"/>
+	<file src="data/textures/road2.png"/>
+	<file src="data/textures/ground.png"/>
+	<file src="data/textures/lowground.png"/>
+	<file src="data/textures/grass.png"/>
+	<file src="data/textures/rails.png"/>
+	<file src="data/textures/bush.png"/>
+	<file src="data/textures/thread.png"/>
+	<file src="data/textures/vehicletyres128.png"/>
+	<file src="data/textures/CTP_tire_style1.png"/>
+	<file src="data/textures/CTP_tire_style2.png"/>
+	<file src="data/textures/tire_CTP.png"/>
+	<file src="data/textures/wheel_tire_SS.png"/>
+	<file src="data/textures/newtreeleavesb128.png"/>
+	<file src="data/textures/newtreeleaves128.png"/>
+	<file src="data/textures/Newtreed256.png"/>
+	<file src="data/textures/kb_ivy2_256.png"/>
+	<file src="data/textures/newhedgea.png"/>
+	<file src="data/textures/snowflakes.png"/>
+	<file src="data/textures/tiretrack.png"/>
+
+	<file src="data/textures/snowflake.png"/>
+
+	<export function="applySnow" type="client"/>
+</meta>

@@ -7,5 +7,5 @@
   <script src="client/keys.lua" type="client"/>
   <script src="client/lines.lua" type="client"/>
 
-  <script src="shared/functions.lua" type="client"/>
+  <export function="isEditing" type="client" />
 </meta>

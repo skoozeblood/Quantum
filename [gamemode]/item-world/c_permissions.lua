@@ -1,7 +1,10 @@
-
-localPlayer = getLocalPlayer()
 local currentObject
 local currentUseData, currentMoveData, currentPickupData, currentUseDataType, currentMoveDataType, currentPickupDataType = {}, {}, {}, nil, nil, nil
+
+ptext = {
+	yes = "Yes (Overrides permissions)",
+	no = "No"
+}
 
 function getPermissions(element)
 	if getElementParent(getElementParent(element)) == getResourceRootElement(getThisResource()) then
@@ -23,6 +26,7 @@ function itemPropertiesGUI(object)
 		if propertiesWindow then
 			destroyElement(propertiesWindow)
 		end
+		setElementData(localPlayer, "exclusiveGUI", true)
 
 		GUIEditor = {
 		    tab = {},
@@ -32,12 +36,12 @@ function itemPropertiesGUI(object)
 		    combobox = {},
 		    checkbox = {}
 		}
-		
+
 		local sx, sy = guiGetScreenSize()
 		local w, h = 332, 391
 		local x = (sx/2)-(w/2)
 		local y = (sy/2)-(h/2)
-		propertiesWindow = guiCreateWindow(x, y, w, h, "Item Properties", false)
+		propertiesWindow = guiCreateWindow(x, y, w, h, "World Item Properties", false)
 		guiWindowSetSizable(propertiesWindow, false)
 
 		--get data
@@ -50,7 +54,6 @@ function itemPropertiesGUI(object)
 		local protected = getElementData(object, "protected")
 		local useExactValues = getElementData(object, "useExactValues")
 		permissions = getPermissions(object) or {}
-		--outputDebugString("#permissions = "..tostring(#permissions))
 		local itemName = tostring(exports.global:getItemName(itemID, itemValue, metadata))
 
 		if protected and protected ~= 0 then
@@ -60,16 +63,16 @@ function itemPropertiesGUI(object)
 		end
 		local protectedText = ""
 		if protected then
-			protectedText = "Yes"
+			protectedText = ptext.yes
 		else
-			protectedText = "No"
+			protectedText = ptext.yes
 		end
 
 		local creatorName = tostring(creator)
 
 		if createdDate then
 			createdDateText = tostring(createdDate)
-		else	
+		else
 			createdDateText = "Unknown"
 		end
 
@@ -78,7 +81,7 @@ function itemPropertiesGUI(object)
 			itemValueText = ""
 		else
 			if exports["item-system"]:getItemHideItemValue(itemID) then
-				if exports.integration:isPlayerSupporter(localPlayer) and exports.global:isStaffOnDuty(localPlayer) or exports.integration:isPlayerTrialAdmin(localPlayer) and exports.global:isStaffOnDuty(localPlayer) or exports.integration:isPlayerScripter(localPlayer) and exports.global:isStaffOnDuty(localPlayer) then
+				if exports.global:isAdminOnDuty(localPlayer) then
 					itemValueText = tostring(itemValue).." (hidden)"
 				else
 					itemValueText = "(hidden)"
@@ -99,7 +102,7 @@ function itemPropertiesGUI(object)
 
 		GUIEditor.label[1] = guiCreateLabel(7, 8, 300, 19, itemName, false, GUIEditor.tab[1])
 		guiSetFont(GUIEditor.label[1], "default-bold-small")
-		
+
 		local itemIDtext = "Item ID: "..tostring(itemID)
 		local itemName2 = exports.global:getItemName(itemID)
 		if(itemName ~= itemName2) then
@@ -110,7 +113,11 @@ function itemPropertiesGUI(object)
 
 		GUIEditor.label[2] = guiCreateLabel(7, 74, 299, 21, "Placed by: "..creatorName, false, GUIEditor.tab[1])
 		GUIEditor.label[3] = guiCreateLabel(7, 95, 299, 21, "Placed date: "..createdDateText, false, GUIEditor.tab[1])
-		GUIEditor.label[4] = guiCreateLabel(7, 116, 299, 21, "Protected: "..protectedText, false, GUIEditor.tab[1])
+		GUIEditor.label[4] = guiCreateLabel(7, 116, 299, 21, "Admin Protected: "..protectedText, false, GUIEditor.tab[1])
+		if protectedText == ptext.yes then
+			guiLabelSetColor(GUIEditor.label[4], 255, 45, 45)
+		end
+
 		GUIEditor.checkbox[1] = guiCreateCheckBox(7, 137, 299, 21, "Use Exact Position", useExactValues, false, GUIEditor.tab[1])
 
 		GUIEditor.tab[2] = guiCreateTab("Permissions", GUIEditor.tabpanel[1])
@@ -118,7 +125,7 @@ function itemPropertiesGUI(object)
 		GUIEditor.label[5] = guiCreateLabel(9, 11, 46, 18, "Use:", false, GUIEditor.tab[2])
 
 		GUIEditor.button[1] = guiCreateButton(62, 35, 240, 25, "Define", false, GUIEditor.tab[2])
-			addEventHandler("onClientGUIClick", GUIEditor.button[1], 
+			addEventHandler("onClientGUIClick", GUIEditor.button[1],
 				function ()
 					local num = 1
 					local action = "use"
@@ -133,13 +140,13 @@ function itemPropertiesGUI(object)
 					local oldData
 					if permissions[action] == type then
 						oldData = permissions[action.."Data"]
-					end 	
+					end
 					showDataSet(type, action, oldData)
 				end
 			, false)
 
 		GUIEditor.button[2] = guiCreateButton(62, 99, 240, 25, "Define", false, GUIEditor.tab[2])
-			addEventHandler("onClientGUIClick", GUIEditor.button[2], 
+			addEventHandler("onClientGUIClick", GUIEditor.button[2],
 				function ()
 					local num = 2
 					local action = "move"
@@ -154,13 +161,13 @@ function itemPropertiesGUI(object)
 					local oldData
 					if permissions[action] == type then
 						oldData = permissions[action.."Data"]
-					end 	
+					end
 					showDataSet(type, action, oldData)
 				end
 			, false)
 
 		GUIEditor.button[3] = guiCreateButton(62, 166, 240, 25, "Define", false, GUIEditor.tab[2])
-			addEventHandler("onClientGUIClick", GUIEditor.button[3], 
+			addEventHandler("onClientGUIClick", GUIEditor.button[3],
 				function ()
 					local num = 3
 					local action = "pickup"
@@ -175,7 +182,7 @@ function itemPropertiesGUI(object)
 					local oldData = nil
 					if permissions[action] == type then
 						oldData = permissions[action.."Data"]
-					end 	
+					end
 					showDataSet(type, action, oldData)
 				end
 			, false)
@@ -192,7 +199,7 @@ function itemPropertiesGUI(object)
 					end
 				end
 			end
-			addEventHandler("onClientGUIComboBoxAccepted", GUIEditor.combobox[1], 
+			addEventHandler("onClientGUIComboBoxAccepted", GUIEditor.combobox[1],
 				function ()
 					local num = 1
 					local combo = GUIEditor.combobox[num]
@@ -222,7 +229,7 @@ function itemPropertiesGUI(object)
 					end
 				end
 			end
-			addEventHandler("onClientGUIComboBoxAccepted", GUIEditor.combobox[2], 
+			addEventHandler("onClientGUIComboBoxAccepted", GUIEditor.combobox[2],
 				function ()
 					local num = 2
 					local combo = GUIEditor.combobox[num]
@@ -252,7 +259,7 @@ function itemPropertiesGUI(object)
 					end
 				end
 			end
-			addEventHandler("onClientGUIComboBoxAccepted", GUIEditor.combobox[3], 
+			addEventHandler("onClientGUIComboBoxAccepted", GUIEditor.combobox[3],
 				function ()
 					local num = 3
 					local combo = GUIEditor.combobox[num]
@@ -276,8 +283,14 @@ function itemPropertiesGUI(object)
 		GUIEditor.label[8] = guiCreateLabel(9, 239, 296, 56, "These settings define who can use, move and pick up this item. The character that dropped the item, admins and anyone with key to the interior can edit these settings. Items set as 'protected' by an admin cannot be moved or picked up before the item has been unprotected by an admin.", false, GUIEditor.tab[2])
 		guiSetFont(GUIEditor.label[8], "default-small")
 		guiLabelSetHorizontalAlign(GUIEditor.label[8], "left", true)
-		GUIEditor.label[9] = guiCreateLabel(9, 204, 112, 18, "Protected: "..protectedText, false, GUIEditor.tab[2])
-		
+		GUIEditor.label[9] = guiCreateLabel(9, 204, 120, 18, "Admin Protected: "..protectedText, false, GUIEditor.tab[2])
+		if protectedText == ptext.yes then
+			guiLabelSetColor(GUIEditor.label[9], 255, 45, 45)
+			guiSetAlpha(GUIEditor.label[5], 0.4)
+			guiSetAlpha(GUIEditor.label[6], 0.4)
+			guiSetAlpha(GUIEditor.label[7], 0.4)
+		end
+
 		local newCreatorName
 		for k,v in ipairs(getElementsByType("player")) do
 			local dbid = tonumber(getElementData(v, "dbid")) or 0
@@ -289,6 +302,7 @@ function itemPropertiesGUI(object)
 		if newCreatorName then
 			guiSetText(GUIEditor.label[2], "Placed by: "..newCreatorName)
 		end
+
 		triggerServerEvent("item-world:getItemPropertiesData", getResourceRootElement(), object)
 	end
 end
@@ -301,6 +315,7 @@ function hideItemPropertiesGUI()
 			destroyElement(propertiesWindow)
 		end
 		propertiesWindow = nil
+		setElementData(localPlayer, "exclusiveGUI", false)
 	end
 	currentObject = nil
 	currentUseData, currentMoveData, currentPickupData, currentUseDataType, currentMoveDataType, currentPickupDataType = {}, {}, {}, nil, nil, nil
@@ -314,20 +329,32 @@ function itemPropertiesGUIFillData(object, creatorName, createdDate, protected)
 		if isElement(GUIEditor.label[3]) then
 			if createdDate then
 				createdDate = tostring(createdDate)
-			else	
+			else
 				createdDate = "Unknown"
 			end
 			guiSetText(GUIEditor.label[3], "Placed date: "..createdDate)
 		end
 		if isElement(GUIEditor.label[4]) then
+
 			if protected then
-				protected = "Yes"
+				protected = ptext.yes
 			else
-				protected = "No"
+				protected = ptext.no
 			end
-			guiSetText(GUIEditor.label[4], "Protected: "..protected)
-			guiSetText(GUIEditor.label[9], "Protected: "..protected)
-		end		
+			guiSetText(GUIEditor.label[4], "Admin Protected: "..protected)
+
+			if protected == ptext.yes then
+				guiLabelSetColor(GUIEditor.label[4], 255, 45, 45)
+			end
+
+			guiSetText(GUIEditor.label[9], "Admin Protected: "..protected)
+			if protected == ptext.yes then
+				guiLabelSetColor(GUIEditor.label[9], 255, 45, 45)
+				guiSetAlpha(GUIEditor.label[5], 0.4)
+				guiSetAlpha(GUIEditor.label[6], 0.4)
+				guiSetAlpha(GUIEditor.label[7], 0.4)
+			end
+		end
 	end
 end
 addEvent("item-world:fillItemPropertiesGUI", true)
@@ -339,10 +366,10 @@ function trim(s)
 	return s
 end
 
-function saveItemProperties(button, state)	
+function saveItemProperties(button, state)
 	local object = currentObject
 	if not object then return end
-	
+
 	local useText = guiComboBoxGetItemText(GUIEditor.combobox[1], guiComboBoxGetSelected(GUIEditor.combobox[1]) or 1)
 	local moveText = guiComboBoxGetItemText(GUIEditor.combobox[2], guiComboBoxGetSelected(GUIEditor.combobox[2]) or 1)
 	local pickupText = guiComboBoxGetItemText(GUIEditor.combobox[3], guiComboBoxGetSelected(GUIEditor.combobox[3]) or 1)
@@ -368,11 +395,11 @@ function saveItemProperties(button, state)
 			if v[3] then
 				pickupData = currentPickupData or {}
 			end
-		end	
+		end
 	end
 
 	triggerServerEvent("item-world:saveItemProperties", getResourceRootElement(), object, use, useData, move, moveData, pickup, pickupData, useExactValueChecked)
-	
+
 	hideItemPropertiesGUI()
 end
 
@@ -414,21 +441,21 @@ function showDataSet(type, action, oldData)
 		inputGridlist = guiCreateGridList(9, 88, 367, 265, false, dataWindow)
 			guiGridListAddColumn(inputGridlist, "ID", 0.1)
 			guiGridListAddColumn(inputGridlist, "Faction", 0.8)
-		
+
 		local btnSave = guiCreateButton(10, 401, 366, 31, "Set data", false, dataWindow)
 		local btnRemove = guiCreateButton(9, 357, 116, 30, "Remove selected", false, dataWindow)
 		local btnRemoveAll = guiCreateButton(130, 357, 116, 30, "Remove all", false, dataWindow)
 
-		addEventHandler("onClientGUIClick", btnAdd, 
+		addEventHandler("onClientGUIClick", btnAdd,
 			function ()
 				local faction = guiGetText(inputCharName)
 				if faction then
 					local factionID, factionName
 					if tonumber(faction) then --if number (faction ID)
 						factionID = tonumber(faction)
-						factionName = exports.factions:getFactionName(factionID)
+						factionName = exports["faction-system"]:getFactionName(factionID)
 					else --faction name
-						factionID = exports.factions:getFactionIDFromName(faction)
+						factionID = exports["faction-system"]:getFactionIDFromName(faction)
 						factionName = faction
 					end
 
@@ -438,7 +465,7 @@ function showDataSet(type, action, oldData)
 
 						if rows > 50 then
 							guiSetText(feedbackLabel, "Too many entries.")
-							guiLabelSetColor(feedbackLabel, 255, 0, 0)							
+							guiLabelSetColor(feedbackLabel, 255, 0, 0)
 						else
 							local i = 0
 							while i <= rows do
@@ -468,27 +495,27 @@ function showDataSet(type, action, oldData)
 					end
 				else
 					guiSetText(feedbackLabel, "Enter name or ID of a faction to add.")
-					guiLabelSetColor(feedbackLabel, 255, 255, 255)					
+					guiLabelSetColor(feedbackLabel, 255, 255, 255)
 				end
 			end
-		, false)	
+		, false)
 
-		addEventHandler("onClientGUIClick", btnRemove, 
+		addEventHandler("onClientGUIClick", btnRemove,
 			function ()
 				local row, column = guiGridListGetSelectedItem(inputGridlist)
 				if(row >= 0) then
 					guiGridListRemoveRow(inputGridlist, row)
 				end
 			end
-		, false)		
+		, false)
 
-		addEventHandler("onClientGUIClick", btnRemoveAll, 
+		addEventHandler("onClientGUIClick", btnRemoveAll,
 			function ()
 				guiGridListClear(inputGridlist)
 			end
 		, false)
 
-		addEventHandler("onClientGUIClick", btnSave, 
+		addEventHandler("onClientGUIClick", btnSave,
 			function ()
 				local newData = {}
 				local rows = guiGridListGetRowCount(inputGridlist) - 1
@@ -520,7 +547,7 @@ function showDataSet(type, action, oldData)
 		if currentData and currentDataType == type then
 			for k, v in ipairs(currentData) do
 				local factionID = tonumber(v)
-				local factionName = exports.factions:getFactionName(factionID)
+				local factionName = exports["faction-system"]:getFactionName(factionID)
 				local row = guiGridListAddRow(inputGridlist)
 				guiGridListSetItemText(inputGridlist, row, 1, tostring(factionID), false, true)
 				guiGridListSetItemText(inputGridlist, row, 2, tostring(factionName), false, false)
@@ -528,7 +555,7 @@ function showDataSet(type, action, oldData)
 		elseif oldData then
 			for k, v in ipairs(oldData) do
 				local factionID = tonumber(v)
-				local factionName = exports.factions:getFactionName(factionID)
+				local factionName = exports["faction-system"]:getFactionName(factionID)
 				local row = guiGridListAddRow(inputGridlist)
 				guiGridListSetItemText(inputGridlist, row, 1, tostring(factionID), false, true)
 				guiGridListSetItemText(inputGridlist, row, 2, tostring(factionName), false, false)
@@ -548,12 +575,12 @@ function showDataSet(type, action, oldData)
 		feedbackLabel = guiCreateLabel(12, 26, 361, 22, "Enter name of a character to add.", false, dataWindow)
 		inputGridlist = guiCreateGridList(9, 88, 367, 265, false, dataWindow)
 			guiGridListAddColumn(inputGridlist, "Character Name", 0.9)
-		
+
 		local btnSave = guiCreateButton(10, 401, 366, 31, "Set data", false, dataWindow)
 		local btnRemove = guiCreateButton(9, 357, 116, 30, "Remove selected", false, dataWindow)
 		local btnRemoveAll = guiCreateButton(130, 357, 116, 30, "Remove all", false, dataWindow)
 
-		addEventHandler("onClientGUIClick", btnAdd, 
+		addEventHandler("onClientGUIClick", btnAdd,
 			function ()
 				local charname = guiGetText(inputCharName)
 				if charname then
@@ -562,7 +589,7 @@ function showDataSet(type, action, oldData)
 
 					if rows > 50 then
 						guiSetText(feedbackLabel, "Too many entries.")
-						guiLabelSetColor(feedbackLabel, 255, 0, 0)					
+						guiLabelSetColor(feedbackLabel, 255, 0, 0)
 					else
 						local i = 0
 						while i <= rows do
@@ -590,24 +617,24 @@ function showDataSet(type, action, oldData)
 					guiLabelSetColor(feedbackLabel, 255, 255, 255)
 				end
 			end
-		, false)	
+		, false)
 
-		addEventHandler("onClientGUIClick", btnRemove, 
+		addEventHandler("onClientGUIClick", btnRemove,
 			function ()
 				local row, column = guiGridListGetSelectedItem(inputGridlist)
 				if(row >= 0) then
 					guiGridListRemoveRow(inputGridlist, row)
 				end
 			end
-		, false)		
+		, false)
 
-		addEventHandler("onClientGUIClick", btnRemoveAll, 
+		addEventHandler("onClientGUIClick", btnRemoveAll,
 			function ()
 				guiGridListClear(inputGridlist)
 			end
 		, false)
 
-		addEventHandler("onClientGUIClick", btnSave, 
+		addEventHandler("onClientGUIClick", btnSave,
 			function ()
 				local newData = {}
 				local rows = guiGridListGetRowCount(inputGridlist) - 1
@@ -663,7 +690,7 @@ function showDataSet(type, action, oldData)
         end
         inputDataMemo = guiCreateMemo(13, 32, 402, 91, oldText, false, dataWindow)
         local btn = guiCreateButton(16, 126, 392, 32, "Set data", false, dataWindow)
-			addEventHandler("onClientGUIClick", btn, 
+			addEventHandler("onClientGUIClick", btn,
 				function ()
 					local querystring = trim(guiGetText(inputDataMemo))
 					local newData = { querystring }
