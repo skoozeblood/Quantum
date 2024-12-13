@@ -722,6 +722,7 @@ function findModAndSend(modType, mod, av, extra)
             --     outputChatBox("Bypassing max "..maxFreeModUploads.." free uploads limit as Mod Reviewer..", 255,194, 14)
             -- end
             -- finish saving mod
+			print (modType, mod, dffdata, txddata, av, extra)
             triggerServerEvent("newmods:saveModFromClient", localPlayer, modType, mod, dffdata, txddata, av, extra)
         end
     elseif av == 2 then

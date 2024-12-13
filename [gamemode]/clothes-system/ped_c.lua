@@ -54,7 +54,7 @@ function drawSkinImage()
 
 
 			local skinImg = ("%03d"):format((tostring(skinDrawing.id)):gsub(":(.*)$", ""), 10)
-			local p = ":account/img/" .. skinImg..".png"
+			local p = ":accounts/img/" .. skinImg..".png"
 
 			if fileExists(p) then
 				imgPath = p

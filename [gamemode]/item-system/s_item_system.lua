@@ -245,8 +245,19 @@ function useItem(itemSlot, additional)
 					fits = true
 				end
 			end
-			--print (clothingid,skin,skin_id,gender,fits,race)
-			--print (inspect(skinTable))
+			local skin, clothingid = unpack(split(tostring(itemValue), ':'))
+			skin = tonumber(skin)
+			clothingid = tonumber(clothingid) or nil
+
+			if exports["sarp-new-mods"]:isCustomMod(skin, "ped") then
+				setElementData(source, "skinID", skin)
+			else
+				setElementData(source, "skinID", nil)
+				setElementModel(source, skin)
+			end
+			setElementData(source, "clothing:id", clothingid)
+
+			triggerEvent('sendAme', source, "changes their clothes.")
 			if clothingid or fits then
 				setElementModel(source, skin)
 				exports.anticheat:setEld(source, "clothing:id", clothingid, 'all')

@@ -173,7 +173,8 @@ function getImage( itemID, itemValue )
 			return ":account/img/nil.png"
 		else
 			--return ":account/img/" .. ("%03d"):format(tonumber(itemValue)) .. ".png"
-			return ":account/img/" .. tmp .. ".png"
+			local fileName = fileExists(":sarp-new-mods/files/img/" .. tmp .. ".png") and ":sarp-new-mods/files/img/" .. tmp .. ".png" or fileExists(":account/img/" .. tmp .. ".png") and ":account/img/" .. tmp .. ".png" or "images/223.png"
+			return fileName
 		end
 	-- within item system
 	else

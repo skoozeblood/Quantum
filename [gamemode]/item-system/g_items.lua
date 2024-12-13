@@ -280,8 +280,8 @@ g_items = {
 	[259] = { "SL Incorporated ID", "#v", 10, 1581, 270, 270, 0, 0, weight = 0.3, image = 129 }, --Exciter
 	[260] = { "Ammonia Bottle", "A bottle of ammonia.", 1, 1484, -15, 30, 0, 0.2, weight = 1 }, --Chaos
 	[261] = { "Emergency Siren (Firetruck)", "An emergency siren to put in your car.", 7, 330, 90, 90, 0, -0.05, weight = 0.2, image = 85 }, -- Chaos
-	[262] = { "Token (( House Token ))", "A small plastic token. (( Used to purchase a new house of < $40,000 value ))", 4, 2894, 0, 0, 0, -0.01, weight = 0.1 }, --Chaos
-	[263] = { "Token (( Vehicle Token ))", "A small plastic token. (( Used to purchase a new vehicle of < $35,000 value ))", 4, 2894, 0, 0, 0, -0.01, weight = 0.1 }, --Chaos
+	--[262] = { "Token (( House Token ))", "A small plastic token. (( Used to purchase a new house of < $40,000 value ))", 4, 2894, 0, 0, 0, -0.01, weight = 0.1 }, --Chaos
+	--[263] = { "Token (( Vehicle Token ))", "A small plastic token. (( Used to purchase a new vehicle of < $35,000 value ))", 4, 2894, 0, 0, 0, -0.01, weight = 0.1 }, --Chaos
 	[264] = { "VMAT ADS-B", "Airport ground vehicle tracking unit.", 6, 2886, 0, 0, 180, 0.1, weight = 0.9, preventSpawn = true }, --Exciter
 	[265] = { "Saint Ernest Medical Center Staff ID", "#v", 10, 1581, 270, 270, 0, 0, weight = 0.3 }, --Exciter
 	[266] = { "SAAN Staff ID", "#v", 10, 1581, 270, 270, 0, 0, weight = 0.3, image = 129 },
