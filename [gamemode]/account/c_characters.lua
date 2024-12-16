@@ -527,11 +527,7 @@ function Characters_characterSelectionVisisble()
 	end)
 
 	local greetings = {
-		"Howdy",
-		"Welcome",
 		"Hello",
-		"Hey",
-		"Hi",
 	}
 	greeting = greetings[math.random(#greetings)]
 	showing = true

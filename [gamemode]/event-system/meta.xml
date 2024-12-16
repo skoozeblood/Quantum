@@ -18,9 +18,6 @@
     <file src="bball-sounds/board.ogg" />
     <file src="bball-sounds/boardhit.ogg" />
 	
-	<!-- Paintball -->
-	<script src="paintball/c_paintball.lua" type="client" />
-	<script src="paintball/s_paintball.lua" type="server" />
 	
 	<file src="paintball/paintball.mp3" />
 
