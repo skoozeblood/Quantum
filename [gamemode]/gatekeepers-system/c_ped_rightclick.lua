@@ -66,7 +66,7 @@ function clickPed(button, state, absX, absY, wx, wy, wz, element)
 							triggerServerEvent( "startRookConvo", getLocalPlayer())
 						elseif (ped=="Victoria Greene") then
 							triggerEvent("cSANGreeting", getLocalPlayer())
-						elseif (ped=="Jessie Smith") then
+						elseif (ped=="Autumn Davis") then
 							--triggerEvent("onEmployment", getLocalPlayer())
 							triggerEvent("cityhall:jesped", getLocalPlayer())
 						elseif (ped=="Carla Cooper") then

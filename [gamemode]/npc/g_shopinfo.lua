@@ -282,7 +282,7 @@ g_shops = {
 			{ name = "Watch", description = "Telling the time was never so sexy!", price = 25, itemID = 17 },
 			{ name = "MP3 Player", description = "A white, sleek looking MP3 Player. The brand reads EyePod.", price = 120, itemID = 19 },
 			{ name = "Chemistry Set", description = "A small chemistry set.", price = 2000, itemID = 44 },
-			{ name = "Safe", description = "A Safe to store your items in.", price = 500, itemID = 223, itemValue = "Safe:2332:50" }, -- Model ID is the old safe and cap is 50kg
+			--{ name = "Safe", description = "A Safe to store your items in.", price = 500, itemID = 223, itemValue = "Safe:2332:50" }, -- Model ID is the old safe and cap is 50kg
 			--{ name = "GPS", description = "A GPS Satnav for a car.", price = 300, itemID = 67 },
 			{ name = "Portable GPS", description = "Personal global positioning device, with recent maps.", price = 200, itemID = 111 },
 			{ name = "Macbook pro A1286 Core i7", description = "A top of the range Macbook to view e-mails and browse the internet.", price = 2200, itemID = 96 },

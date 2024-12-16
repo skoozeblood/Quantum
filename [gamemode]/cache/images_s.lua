@@ -30,7 +30,7 @@ function addImage(id, url, data)
 			outputDebugString("[CACHE] Images / Server / addImage / Couln't cache image - "..id.." in server's file system.")
 		end
 	else
-		fetchRemote (url, "cache/images", 3, addImageAsync, "", true, url, source, id)
+		--fetchRemote (url, "cache/images", 3, addImageAsync, "", true, url, source, id)
 	end
 end
 addEvent("cache:addImage", true)

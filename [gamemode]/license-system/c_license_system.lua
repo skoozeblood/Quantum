@@ -1,11 +1,11 @@
 wLicense, licenseList, bAcceptLicense, bCancel, bBuyLicense = nil
-local Johnson = createPed(211,  1099, -767.7998046875, 976.52996826172)
-setPedRotation(Johnson, 180)
-setElementDimension(Johnson, 4)
+local Johnson = createPed(211,  1111.4736328125, -775.6005859375, 976.25158691406)
+setPedRotation(Johnson, 90)
+setElementDimension(Johnson, 110)
 setElementInterior(Johnson, 5)
 setElementData( Johnson, "talk", 1, false )
 setElementData( Johnson, "name", "Carla Cooper", false )
-setPedAnimation ( Johnson, "FOOD", "FF_Sit_Look", -1, true, false, false )
+--setPedAnimation ( Johnson, "FOOD", "FF_Sit_Look", -1, true, false, false )
 
 local dominick = createPed(187,  1108.599609375, -767.2998046875, 976.59997558594)
 setPedRotation(dominick, 180)

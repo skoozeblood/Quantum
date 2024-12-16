@@ -1,7 +1,7 @@
 --MAXIME
 local timer = nil
-function startWarnings()
-	local message = "[SYSTEM] Server is about to shutdown for daily backup & maintenance. Please finish what you're doing then proceed to logout before getting auto-kicked by the system, this is to ensure the data consistence for your account before backup processes start. It could take up to 1 hour and server will be back online again automatically! We're sorry for the inconvenience." 
+--function startWarnings()
+	--local message = "[SYSTEM] Server is about to shutdown for daily backup & maintenance. Please finish what you're doing then proceed to logout before getting auto-kicked by the system, this is to ensure the data consistence for your account before backup processes start. It could take up to 1 hour and server will be back online again automatically! We're sorry for the inconvenience." 
 	local players = exports.pool:getPoolElementsByType("player")
 	for k, arrayPlayer in ipairs(players) do
 		triggerClientEvent(arrayPlayer,"announcement:post", arrayPlayer, message, 255, 0, 0, 1)

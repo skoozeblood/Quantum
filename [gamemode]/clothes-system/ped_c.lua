@@ -3,9 +3,9 @@
 -- ped must be clientside
 --  DO NOT MOVE HIM xD
 -- he's inside No Sense clothing Montgomery
-local PEDX, PEDY, PEDZ = 2247.6025390625, -1664.12890625, 15.469003677368
+local PEDX, PEDY, PEDZ = 2239.6552734375, -1672.896484375, 15.4765625
 local PEDI, PEDD = 0, 0
-local PEDROT = 180
+local PEDROT = 0
 local PEDNAME = "Aria Rockefeller"
 local PEDSKIN = 150
 

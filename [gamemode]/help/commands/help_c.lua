@@ -178,17 +178,17 @@ function F1RPhelp( key, keyState )
 		local browserMantis = guiCreateBrowser(0.02, 0.02, 0.96, 0.96, false, false, true, tabMantis)
 		local mantisBrowser = guiGetBrowser(browserMantis)
 		
-		addEventHandler("onClientBrowserCreated", mantisBrowser, function()
-			if isBrowserDomainBlocked("bugs.owlgaming.net") then
-				requestBrowserDomains({"bugs.owlgaming.net"}, false, function(accepted, newDomains)
+		--addEventHandler("onClientBrowserCreated", mantisBrowser, function()
+			--if isBrowserDomainBlocked("bugs.owlgaming.net") then
+				--requestBrowserDomains({"bugs.owlgaming.net"}, false, function(accepted, newDomains)
 					--[[ The reason I don't use source here on the loadBrowser is that the source of this callback isn't the browser
 					so to prevent the warning and the hassle of the user reopening the UI I just target the browser directly.]] 
-					loadBrowserURL(mantisBrowser, "http://bugs.owlgaming.net/")
-				end)
-			else
-				loadBrowserURL(source, "http://bugs.owlgaming.net/")
-			end
-		end)
+					--loadBrowserURL(mantisBrowser, "http://bugs.owlgaming.net/")
+				--end)
+			--else
+			--	loadBrowserURL(source, "http://bugs.owlgaming.net/")
+			--end
+		--end)
 
 		-- this is to prevent binds while typing.
 		addEventHandler("onClientGUIFocus", myWindow, function()

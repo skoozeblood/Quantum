@@ -2,10 +2,10 @@
  
 --ATM SERVICE PED
 local localPlayer = getLocalPlayer()
-local atmPed = createPed( 113, 1443.2294921875, 1574.9267578125, 11.963119506836 )
-setPedRotation( atmPed, 90 )
-setElementDimension( atmPed, 1352)
-setElementInterior( atmPed , 56 )
+local atmPed = createPed( 113, 1412.2783203125, -1621.6669921875, 13.5546875 )
+setPedRotation( atmPed, 245 )
+setElementDimension( atmPed, 0)
+setElementInterior( atmPed , 0 )
 setElementData( atmPed, "talk", 1, false )
 setElementData( atmPed, "name", "Maxime Du Trieux", false )
 --setPedAnimation ( atmPed, "INT_OFFICE", "OFF_Sit_Bored_Loop", -1, true, false, false )
@@ -14,10 +14,10 @@ setElementFrozen(atmPed, true)
 
 --GENERAL SERVICE PED
 local localPlayer = getLocalPlayer()
-local generalServicePed = createPed( 290, 1443.234375, 1571.1435546875, 11.963119506836 )
-setPedRotation( generalServicePed, 89.993133)
-setElementDimension( generalServicePed, 1352)
-setElementInterior( generalServicePed , 56 )
+local generalServicePed = createPed( 290, 1412.08203125, -1624.0302734375, 13.5546875 )
+setPedRotation( generalServicePed, 250)
+setElementDimension( generalServicePed, 0)
+setElementInterior( generalServicePed , 0 )
 setElementData( generalServicePed, "talk", 1, false )
 setElementData( generalServicePed, "name", "Jonathan Smith", false )
 setElementData( generalServicePed, "depositable", 1 , true )
@@ -25,7 +25,8 @@ setElementData( generalServicePed, "limit", 0 , true )
 --setPedAnimation ( generalServicePed, "INT_OFFICE", "OFF_Sit_Type_Loop", -1, true, false, false )
 setElementFrozen(generalServicePed, true)
 
---createBlip(1570.4228515625, -1337.3984375, 16.484375, 52, 2, 255, 0, 0, 255, 0, 300) -- Star tower
+createBlip(1570.4228515625, -1337.3984375, 16.484375, 52, 2, 255, 0, 0, 255, 0, 300) -- Star tower
+createBlip(1412.08203125, -1624.0302734375, 13.5546875, 52, 2, 255, 0, 0, 255, 0, 300) -- Fleeca Pershing
 
 local wGui = nil
 function bankerInteraction(ped) 

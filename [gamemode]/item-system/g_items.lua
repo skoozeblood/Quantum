@@ -58,7 +58,7 @@ g_items = {
 	[57] = { "Fuel Can", "A small metal fuel canister.", 4, 1650, 0, 0, 0, 0.30, weight = 1 }, -- would prolly to make sense to make it heavier if filled
 	[58] = { "Ziebrand Beer", "The finest beer, imported from Holland.", 1, 1520, 0, 0, 0, 0.15, weight = 1 },
 	--[59] = { "Mudkip", "So i herd u liek mudkips? mabako's Favorite.", 1, 1579, 0, 0, 0, 0, weight = 0 },
-	[60] = { "Safe", "A safe to store your items in.", 4, 2332, 0, 0, 0, 0, weight = 5 },
+	--[60] = { "Safe", "A safe to store your items in.", 4, 2332, 0, 0, 0, 0, weight = 5 },
 	[61] = { "Emergency Light Strobes", "An Emergency Light Strobe which you can put in your car.", 7, 1210, 270, 0, 0, 0.1, weight = 0.1 },
 	[62] = { "Bastradov Vodka", "For your best friends - Bastradov Vodka.", 1, 1512, 0, 0, 0, 0.25, weight = 1 },
 	[63] = { "Scottish Whiskey", "The Best Scottish Whiskey, now exclusively made from Haggis.", 1, 1512, 0, 0, 0, 0.25, weight = 1 },

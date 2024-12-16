@@ -110,7 +110,7 @@ function Characters_showSelection()
 				end
 				table.insert(pedTable, thePed)
 			else
-				outputChatBox("[ACCOUNT] Error occurred while spawning character '"..v[2].."'. Please report on http://bugs.owlgaming.net :" )
+				outputChatBox("[ACCOUNT] Error occurred while spawning character '"..v[2].."'. Please report on Discord.:" )
 				for index, value in pairs( v ) do
 					outputChatBox( index .. " : " .. value )
 				end

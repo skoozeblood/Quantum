@@ -6,8 +6,8 @@ chInterior = 3
 -- CALL BACKS FROM CLIENT
 
 function onEmploymentServer()
-	exports.global:sendLocalText(source, "Jessie Smith says: Hello, are you looking for a new job?", nil, nil, nil, 10)
-	exports.global:sendLocalText(source, " *Jessie Smith hands over a list with jobs to " .. getPlayerName(source):gsub("_", " ") .. ".", 255, 51, 102)
+	exports.global:sendLocalText(source, "Autumn Davis says: Hello, are you looking for a new job?", nil, nil, nil, 10)
+	exports.global:sendLocalText(source, " *Autumn Davis hands over a list with jobs to " .. getPlayerName(source):gsub("_", " ") .. ".", 255, 51, 102)
 end
 
 addEvent("onEmploymentServer", true)
