@@ -2,7 +2,6 @@
         <info author="OwlGaming MTA Server Development Team" type="script" description=""/>
 		<oop>true</oop>
 
-    	<script src="s_server_global_maintenance.lua" type="server"/>
 		<script src="lazyquery.lua" type="server"/>
 		<export function="lazyQuery" type="server" http="false" />
 
