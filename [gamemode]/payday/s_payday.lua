@@ -18,7 +18,7 @@ local rentalHouses = {}
 local threads = { }
 local threadTimer = nil
 local govAmount = 10000000
-local unemployedPay = 200
+local unemployedPay = 50
 
 function payWage(player, pay, faction, tax)
 	local dbid = tonumber(getElementData(player, "dbid"))
