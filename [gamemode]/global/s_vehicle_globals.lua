@@ -34,23 +34,25 @@ end
 
 function createVehicleNew(model, x,y,z, rx,ry,rz, plate)
 	local moddedVehicles = getElementData(getRootElement(), "moddedVehicles") or {}
-	for k, v in pairs(moddedVehicles) do
+	if moddedVehicles and #moddedVehicles > 0 then 
+		for k, v in pairs(moddedVehicles) do
 
-		local _model = v.modelid
-		local name = v.title
+			local _model = v.modelid
+			local name = v.title
 
-		if tonumber(_model) == tonumber(model) then
-			local base = v.basemodel
-			local veh = exports.vehicle_load:createVehicleHere(base, x,y,z, rx,ry,rz, plate)
-			if veh then
+			if tonumber(_model) == tonumber(model) then
+				local base = v.basemodel
+				local veh = exports.vehicle_load:createVehicleHere(base, x,y,z, rx,ry,rz, plate)
+				if veh then
 
-				setElementData(veh, vehDatas.model, model)
-				setElementData(veh, vehDatas.base, base)
-				setElementData(veh, vehDatas.name, name)
-				
-				return veh
-			else
-				return false
+					setElementData(veh, vehDatas.model, model)
+					setElementData(veh, vehDatas.base, base)
+					setElementData(veh, vehDatas.name, name)
+
+					return veh
+				else
+					return false
+				end
 			end
 		end
 	end

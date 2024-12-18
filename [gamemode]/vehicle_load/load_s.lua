@@ -85,9 +85,9 @@ function loadOneVehicle(data, loadDeletedOne)
 
 		-- Valid vehicle variant?
 		local var1, var2 = data.variant1, data.variant2
-		if not exports.vehicle:isValidVariant( data.model, var1, var2 ) then
-			var1, var2 = exports.vehicle:getRandomVariant( data.model )
-			dbExec( exports.mysql:getConn(), "UPDATE vehicles SET variant1 = " .. var1 .. ", variant2 = " .. var2 .. " WHERE id='" .. mysql:escape_string(data.id) .. "'")
+		if data.id and not var1 and var2 or not exports.vehicle:isValidVariant( data.model, var1, var2 ) then
+			var1, var2 = exports.vehicle:getRandomVariant( data.model ) or 0, 0
+			dbExec( exports.mysql:getConn(), "UPDATE vehicles SET variant1 = ?, variant2 = ? WHERE id=?",var1, var2, data.id)
 		end
 
 		-- Spawn the vehicle
@@ -304,4 +304,18 @@ function loadOneVehicle(data, loadDeletedOne)
 			end
 		end, { }, exports.mysql:getConn(), query_load.." WHERE v.id=? "..( loadDeletedOne and "" or " AND deleted=0 " ), data )
 	end
+end
+
+
+function createVehicleHere(baseModel, x,y,z, rx,ry,rz, plate)
+	return loadOneVehicle({
+		model = baseModel,
+		currx = x,
+		curry = y,
+		currz = z,
+		currrx = rx,
+		currry = ry,
+		currrz = rz,
+		plate = plate
+	}, false)
 end

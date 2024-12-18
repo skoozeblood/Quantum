@@ -78,6 +78,7 @@
 	<script src="s_vehicle_globals.lua" type="server" />
 	<export function="getVehiclesOwnedByCharacter" type="server" />
 	<export function="canPlayerBuyVehicle" type="server" />
+	<export function="createVehicleNew" type="server" />
 	
 	<script src="s_money_globals.lua" type="server" />
 	<script src="c_money_globals.lua" type="client" />

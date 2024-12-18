@@ -3,6 +3,7 @@
     
     <script src="load_s.lua" type="server" />
     <export function="loadOneVehicle" type="server" />
+    <export function="createVehicleHere" type="server" />
 
     <min_mta_version server="1.3.4-0.00000"></min_mta_version>
 </meta>

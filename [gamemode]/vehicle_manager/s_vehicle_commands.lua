@@ -511,6 +511,8 @@ function createTempVehicle(thePlayer, commandName, vehShopID)
 
 		local r = getPedRotation(thePlayer)
 		local x, y, z = getElementPosition(thePlayer)
+		x=x+1
+		y=y+1
 		z = z +0.5
 
 		local plate = tostring( getElementData(thePlayer, "account:id") )
@@ -528,8 +530,8 @@ function createTempVehicle(thePlayer, commandName, vehShopID)
 			outputChatBox("Ops.. Something went wrong.", thePlayer, 255, 0, 0)
 			return false
 		end
-
-		local c1,c2,c3,c4 = exports["carshop-system"]:getRColor(vehicleID)
+		math.randomseed(getTickCount())
+		local c1,c2,c3,c4 = exports["carshop-system"]:getRColor(vehicleID) or 0,1,2,3
 		setVehicleColor(veh, c1,c2,c3,c4)
 
 		if (armoredCars[vehicleID]) then
