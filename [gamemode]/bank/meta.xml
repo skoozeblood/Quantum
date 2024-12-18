@@ -1,6 +1,15 @@
 <meta>
     <info author="OWL MTA Scripting Team" type="script" description="Bank System" />
-    
+    <include resource="item-system" />
+    <include resource="rightclick" />
+    <include resource="hud" />
+    <include resource="donators" />
+    <include resource="global" />
+    <include resource="phone" />
+    <include resource="cache" />
+    <include resource="pool" />
+    <include resource="integration" />
+    <include resource="logs" />
     <script src="s_bank_system.lua" type="server" />
     <script src="c_bank_system.lua" type="client" />
     <script src="c_bank_ped.lua" type="client" />

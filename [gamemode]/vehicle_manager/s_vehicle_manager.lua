@@ -235,7 +235,7 @@ function systemDeleteVehicle(vehid, reason) --This function is meant to be used 
 		return false, "veh id is missing or invalid"
 	end
 	--Existed or not, we take all keys anyway.
-	call( getResourceFromName( "item-system" ), "deleteAll", 3 , vehid )
+	exports["item-system"]:deleteAll(3 , vehid )
 
 	-- Updated to use MTA's Native MySQL. Here is where the database stuff is processed.
 	local query = dbQuery(exports.mysql:getConn(), "SELECT id FROM vehicles WHERE id=? LIMIT 1", vehid)

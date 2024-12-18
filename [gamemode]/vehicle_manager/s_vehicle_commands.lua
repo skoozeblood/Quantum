@@ -2176,7 +2176,7 @@ function removeVehicle(thePlayer, commandName, id)
 			mysql:query_free("DELETE FROM `vehicle_logs` WHERE `vehID`='" .. mysql:escape_string(dbid) .. "'")
 			mysql:query_free("DELETE FROM `vehicle_notes` WHERE `vehid`='" .. mysql:escape_string(dbid) .. "'")
 
-			call( getResourceFromName( "item-system" ), "deleteAll", 3, dbid )
+			exports["item-system"]:deleteAll(3, dbid )
 			for k, theObject in ipairs(getElementsByType("object", getResourceRootElement(getResourceFromName("item-world")))) do
 				if getElementData(theObject, "id") then
 					local itemID = tonumber(getElementData(theObject, "itemID"))
@@ -2264,7 +2264,7 @@ function restoreVehicle(thePlayer, commandName, id)
 			local adminID = getElementData(thePlayer, "account:id")
 			if not theVehicle then
 				if mysql:query_free("UPDATE `vehicles` SET `deleted`='0', `chopped`='0' WHERE `id`='" .. mysql:escape_string(dbid) .. "'") then
-					call( getResourceFromName( "vehicle-system" ), "loadOneVehicle", dbid )
+					exports["vehicle-system"]:loadOneVehicle(dbid )
 					outputChatBox("   Restoring vehicle ID #"..dbid.."...", thePlayer)
 					setTimer(function()
 						outputChatBox("   Restoring vehicle ID #"..dbid.."...Done!", thePlayer)
@@ -2368,7 +2368,7 @@ function deleteVehicle(thePlayer, commandName, id)
 
 				if (dbid<0) then -- TEMP vehicle
 					
-					call( getResourceFromName( "item-system" ), "deleteAll", 3, dbid )
+					exports["item-system"]:deleteAll(3, dbid )
 
 					for k, theObject in ipairs(getElementsByType("object", getResourceRootElement(getResourceFromName("item-world")))) do
 						if getElementData(theObject, "id") then
@@ -2399,7 +2399,7 @@ function deleteVehicle(thePlayer, commandName, id)
 						return outputChatBox("Error clearing vehicle #"..dbid.."'s inventory.", thePlayer, 255,100,100)
 					end
 
-					call( getResourceFromName( "item-system" ), "deleteAll", 3, dbid )
+					exports["item-system"]:deleteAll(3, dbid )
 
 					mysql:query_free("UPDATE `vehicles` SET `deleted`='"..tostring(adminID).."', deletedDate=NOW(), textures='"..toJSON({{}}).."' WHERE `id`='" .. mysql:escape_string(dbid) .. "'")
 					mysql:query_free("DELETE FROM `mdc_vehcrimes` WHERE vehid = '" .. mysql:escape_string(dbid) .. "'")

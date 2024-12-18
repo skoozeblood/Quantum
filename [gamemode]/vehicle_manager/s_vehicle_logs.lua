@@ -32,7 +32,7 @@ function getVehicleOwner(vehicle)
 	if faction > 0 then
 		return getTeamName(exports.pool:getElement('team', faction))
 	else
-		return call(getResourceFromName("cache"), "getCharacterName", getElementData(vehicle, "owner")) or "N/A"
+		return exports.cache:getCharacterName(getElementData(vehicle, "owner")) or "N/A"
 	end
 end
 

@@ -493,8 +493,8 @@ function useItem(itemSlot, additional)
 			triggerEvent('sendAme', source, "looks at their lottery ticket.")
 			outputChatBox("You glance at the lottery ticket and read the number: " .. itemValue, source, 0, 255, 0)
 		elseif (itemID==69) then -- Dictionary
-			local learned = call(getResourceFromName("language-system"), "learnLanguage", source, itemValue, true)
-			local lang = call(getResourceFromName("language-system"), "getLanguageName", itemValue)
+			local learned = exports["language-system"]:learnLanguage(source, itemValue, true)
+			local lang = exports["language-system"]:getLanguageName(itemValue)
 
 			if (learned) then
 				takeItem(source, itemID, itemValue)

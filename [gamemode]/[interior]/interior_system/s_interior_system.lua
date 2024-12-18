@@ -103,7 +103,7 @@ function cleanupProperty( id, donotdestroy)
 
 		local resE = getResourceRootElement( getResourceFromName( "elevator-system" ) )
 		if resE then
-			call( getResourceFromName( "elevator-system" ), "delElevatorsFromInterior", "MAXIME" , "PROPERTYCLEANUP",  id )
+			exports["elevator-system"]:delElevatorsFromInterior("MAXIME" , "PROPERTYCLEANUP",  id )
 		end
 
 		if not donotdestroy then
@@ -116,7 +116,7 @@ function cleanupProperty( id, donotdestroy)
 		clearSafe( id, true )
 
 		setTimer ( function ()
-			call( getResourceFromName( "item-system" ), "deleteAllItemsWithinInt", id, 0, "CLEANUPINT" )
+			exports["item-system"]:deleteAllItemsWithinInt(id, 0, "CLEANUPINT" )
 		end, 3000, 1)
 
 	end
@@ -246,7 +246,7 @@ function publicSellProperty(thePlayer, dbid, showmessages, givemoney, CLEANUP)
 				end
 
 				-- take all keys
-				call( getResourceFromName( "item-system" ), "deleteAll", interiorType == 0 and 4 or 5, dbid )
+				exports["item-system"]:deleteAll(interiorType == 0 and 4 or 5, dbid )
 
 				--triggerClientEvent(thePlayer, "removeBlipAtXY", thePlayer, interiorType, entrance.x, entrance.y, entrance.z)
 			elseif exports.factions:isPlayerInFaction(thePlayer, interiorStatus.faction) then
@@ -274,7 +274,7 @@ function publicSellProperty(thePlayer, dbid, showmessages, givemoney, CLEANUP)
 				end
 
 				-- take all keys
-				call( getResourceFromName( "item-system" ), "deleteAll", interiorType == 0 and 4 or 5, dbid )
+				exports["item-system"]:deleteAll(interiorType == 0 and 4 or 5, dbid )
 			else
 				if showmessages then
 					if CLEANUP == "FORCESELL" then
@@ -297,7 +297,7 @@ function publicSellProperty(thePlayer, dbid, showmessages, givemoney, CLEANUP)
 				end
 			end
 			-- take all keys
-			call( getResourceFromName( "item-system" ), "deleteAll", interiorType == 0 and 4 or 5, dbid )
+			exports["item-system"]:deleteAll(interiorType == 0 and 4 or 5, dbid )
 			--triggerClientEvent(thePlayer, "removeBlipAtXY", thePlayer, interiorType, entrance.x, entrance.y, entrance.z)
 		end
 		realReloadInterior(dbid, {thePlayer})
@@ -314,8 +314,8 @@ function unownProperty(intid, reason) --This function is meant to be used by the
 	end
 	moveCharactersOutside(intid)
 	--Existed or not, we take all keys anyway.
-	call( getResourceFromName( "item-system" ), "deleteAll", 4 , intid )
-	call( getResourceFromName( "item-system" ), "deleteAll", 5 , intid )
+	exports["item-system"]:deleteAll(4 , intid )
+	exports["item-system"]:deleteAll(5 , intid )
 	--Clean up NPC, ATMs, dancers, etc in the interior but don't destroy objects if it's a custom interior.
 	cleanupProperty(intid, true)
 	clearSafe( intid, true )
@@ -385,8 +385,8 @@ function sellTo(thePlayer, commandName, targetPlayerName)
 									end
 
 									moveCharactersOutside(dbid, true)
-									call( getResourceFromName( "item-system" ), "deleteAll", 4, dbid )
-									call( getResourceFromName( "item-system" ), "deleteAll", 5, dbid )
+									exports["item-system"]:deleteAll(4, dbid )
+									exports["item-system"]:deleteAll(5, dbid )
 									exports.global:giveItem(targetPlayer, keytype, dbid)
 
 									--triggerClientEvent(thePlayer, "removeBlipAtXY", thePlayer, interiorType, entrance.x, entrance.y, entrance.z)
@@ -468,8 +468,8 @@ function buyInterior(player, pickup, cost, isHouse, isRentable)
 		local entrance = getElementData(pickup, "entrance")
 
 		-- make sure it's an unqiue key
-		call( getResourceFromName( "item-system" ), "deleteAll", 4, pickupid )
-		call( getResourceFromName( "item-system" ), "deleteAll", 5, pickupid )
+		exports["item-system"]:deleteAll(4, pickupid )
+		exports["item-system"]:deleteAll(5, pickupid )
 
 		if (isHouse) or (isRentable) then
 			exports.global:giveItem(player, 4, pickupid)

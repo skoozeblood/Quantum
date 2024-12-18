@@ -44,7 +44,7 @@ function interiorShout( thePlayer, commandName, ... )
         end
     end
     --[[
-    local message2 = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, nearbyPlayer, message, language)
+    local message2 = exports["language-system"]:applyLanguage(thePlayer, nearbyPlayer, message, language)
     message2 = trunklateText(nearbyPlayer, message2)
     local r, g, b = 255, 255, 255
     local focus = getElementData(nearbyPlayer, "focus")
@@ -76,7 +76,7 @@ function interiorShout( thePlayer, commandName, ... )
                             local dimension = getElementDimension(value)
                             local dadimension = getElementDimension(thePlayer)
                             if (dimension==dbid) and (dadimension~=dimension) then
-                                local message2 = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, value, message, language)
+                                local message2 = exports["language-system"]:applyLanguage(thePlayer, value, message, language)
                                 local message = trunklateText( thePlayer, message2 )
                                 outputChatBox("["..languagename.."] " .. playerName:gsub("_", " ") .. " shouts: " .. message.."!", value, 200, 200, 200)
                             end
@@ -118,7 +118,7 @@ function interiorShout( thePlayer, commandName, ... )
                             local dimension = getElementDimension(value)
                             local dadimension = getElementDimension(thePlayer)
                             if (isPlayerInTheCol) and (value~=thePlayer) and (dadimension~=dimension) then
-                                local message2 = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, value, message, language)
+                                local message2 = exports["language-system"]:applyLanguage(thePlayer, value, message, language)
                                 local message = trunklateText( thePlayer, message2 )
                                 outputChatBox("["..languagename.."] " .. playerName:gsub("_", " ") .. " shouts: " .. message.."!", value, 200, 200, 200)
                             end

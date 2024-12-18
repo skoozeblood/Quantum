@@ -57,7 +57,7 @@ function getCurrentLanguage(player, command)
 	end
 
 	local language = getElementData(player, "languages.lang" .. languageslot) or 0
-	local languagename = call(getResourceFromName("language-system"), "getLanguageName", language)
+	local languagename = exports["language-system"]:getLanguageName(language)
 	return language, languagename
 end
 
@@ -78,7 +78,7 @@ function localIC(source, message, language)
 	local playerName = getPlayerName(source)
 
 	message = string.gsub(message, "#%x%x%x%x%x%x", "") -- Remove colour codes
-	local languagename = call(getResourceFromName("language-system"), "getLanguageName", language)
+	local languagename = exports["language-system"]:getLanguageName(language)
 	message = trunklateText( source, message )
 
 	local color = {0xEE,0xEE,0xEE}
@@ -147,7 +147,7 @@ function localIC(source, message, language)
 								local lp = getVehicleOccupant(pveh, i)
 
 								if (lp) and (lp~=source) then
-									local message2 = call(getResourceFromName("language-system"), "applyLanguage", source, lp, message, language)
+									local message2 = exports["language-system"]:applyLanguage(source, lp, message, language)
 									local message2 = trunklateText( lp, message2 )
 
 									outputChatBox(" [" .. languagename .. "] " .. playerName .. " ((In Car)) says: " .. message2, lp, unpack(color))
@@ -190,7 +190,7 @@ function localIC(source, message, language)
 								color = {0xAA,0xAA,0xAA}
 							end
 						end
-						local message2 = call(getResourceFromName("language-system"), "applyLanguage", source, nearbyPlayer, message, language)
+						local message2 = exports["language-system"]:applyLanguage(source, nearbyPlayer, message, language)
 						local message2 = trunklateText( nearbyPlayer, message2 )
 
 						outputChatBox(" [" .. languagename .. "] " .. playerName .. " says: " .. message2, nearbyPlayer, unpack(color))
@@ -305,7 +305,7 @@ function radio(source, radioID, message, cmd)
 			local username = getPlayerName(source)
 			local languageslot = getElementData(source, "languages.current") or 1
 			local language = getElementData(source, "languages.lang" .. languageslot)
-			local languagename = call(getResourceFromName("language-system"), "getLanguageName", language)
+			local languagename = exports["language-system"]:getLanguageName(language)
 			local channelName = "#" .. theChannel
 
 			message = trunklateText( source, message )
@@ -617,7 +617,7 @@ function radio(source, radioID, message, cmd)
 					triggerClientEvent (value, "playRadioSound", getRootElement())
 				end
 				if value ~= source then
-					local message2 = call(getResourceFromName("language-system"), "applyLanguage", source, value, message, language)
+					local message2 = exports["language-system"]:applyLanguage(source, value, message, language)
 					local r, g, b = 0, 102, 255
 					local focus = getElementData(value, "focus")
 					if type(focus) == "table" then
@@ -650,7 +650,7 @@ function radio(source, radioID, message, cmd)
 								end
 
 								if not found then
-									local message2 = call(getResourceFromName("language-system"), "applyLanguage", source, v, message, language)
+									local message2 = exports["language-system"]:applyLanguage(source, v, message, language)
 									local text1 = "[" .. languagename .. "] " .. getPlayerName(value) .. "'s Radio"
 									local text2 = ": " .. trunklateText( v, message2 )
 
@@ -668,7 +668,7 @@ function radio(source, radioID, message, cmd)
 			for key, value in ipairs(getElementsByType("player")) do
 				if cmd == "rlow" and getElementDistance(source, value) < 3 or getElementDistance(source, value) < 10 then
 					if (value~=source) then
-						local message2 = call(getResourceFromName("language-system"), "applyLanguage", source, value, message, language)
+						local message2 = exports["language-system"]:applyLanguage(source, value, message, language)
 						local text1 = "[" .. languagename .. "] " .. getPlayerName(source) .. " [RADIO]"
 						if cmd == "rlow" then
 							text2 = " whispers: " .. trunklateText( value, message2 )
@@ -1268,7 +1268,7 @@ function pmPlayer(thePlayer, commandName, who, ...)
 				if exports.global:isStaffOnDuty(thePlayer) or (getElementData(thePlayer, "reportadmin") == targetPlayer) then
 					-- Let pm go through
 				else
-					local are_they_friends = call(getResourceFromName("social"), "isFriendOf", getElementData(thePlayer, 'account:id'), getElementData(targetPlayer, 'account:id'))
+					local are_they_friends = exports.social:isFriendOf(getElementData(thePlayer, 'account:id'), getElementData(targetPlayer, 'account:id'))
 					local allow_friends_pm = getElementData(targetPlayer, 'social_friends_bypass_pmblock') == '1'
 					if are_they_friends and allow_friends_pm then
 						-- Let pm go through
@@ -1540,7 +1540,7 @@ function localShout(thePlayer, commandName, ...)
 
 						if (logged==1) and not (isPedDead(nearbyPlayer)) then
 							table.insert(affectedElements, nearbyPlayer)
-							local message2 = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, nearbyPlayer, message, language)
+							local message2 = exports["language-system"]:applyLanguage(thePlayer, nearbyPlayer, message, language)
 							message2 = trunklateText(nearbyPlayer, message2)
 							local r, g, b = 255, 255, 255
 							local focus = getElementData(nearbyPlayer, "focus")
@@ -1584,7 +1584,7 @@ function megaphoneShout(thePlayer, commandName, ...)
 
 				local languageslot = getElementData(thePlayer, "languages.current") or 1
 				local language = getElementData(thePlayer, "languages.lang" .. languageslot)
-				local langname = call(getResourceFromName("language-system"), "getLanguageName", language)
+				local langname = exports["language-system"]:getLanguageName(language)
 
 				for index, nearbyPlayer in ipairs(getElementsByType("player")) do
 					if getElementDistance( thePlayer, nearbyPlayer ) < 40 then
@@ -1597,7 +1597,7 @@ function megaphoneShout(thePlayer, commandName, ...)
 							if (logged==1) and not (isPedDead(nearbyPlayer)) then
 								local message2 = message
 								if nearbyPlayer ~= thePlayer then
-									message2 = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, nearbyPlayer, message, language)
+									message2 = exports["language-system"]:applyLanguage(thePlayer, nearbyPlayer, message, language)
 								end
 								table.insert(affectedElements, nearbyPlayer)
 								outputChatBox(" [" .. langname .. "] ((" .. playerName .. ")) Megaphone <O: " .. trunklateText(nearbyPlayer, message2), nearbyPlayer, 255, 255, 0)
@@ -2447,7 +2447,7 @@ function localWhisper(thePlayer, commandName, targetPlayerNick, ...)
 						end
 
 						message2 = trunklateText( targetPlayer, message2 )
-						local message2 = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, targetPlayer, message, language)
+						local message2 = exports["language-system"]:applyLanguage(thePlayer, targetPlayer, message, language)
 
 						triggerEvent('sendAme', thePlayer, "whispers to " .. targetPlayerName .. ".")
 						local r, g, b = 255, 255, 255
@@ -2538,7 +2538,7 @@ function localClose(thePlayer, commandName, ...)
 					if getElementDistance( thePlayer, targetPlayers ) < 3 then
 						local message2 = message
 						if targetPlayers ~= thePlayer then
-							message2 = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, targetPlayers, message, language)
+							message2 = exports["language-system"]:applyLanguage(thePlayer, targetPlayers, message, language)
 							message2 = trunklateText( targetPlayers, message2 )
 						end
 						local r, g, b = 255, 255, 255

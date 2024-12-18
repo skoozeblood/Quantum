@@ -224,19 +224,19 @@ function newCharacter_updateLanguage()
 
 	if source == gui["btnLanguagePrev"] then
 		if languageselected == 1 then
-			languageselected = call( getResourceFromName( "language-system" ), "getLanguageCount" )
+			languageselected = exports["language-system"]:getLanguageCount()
 		else
 			languageselected = languageselected - 1
 		end
 	elseif source == gui["btnLanguageNext"] then
-		if languageselected == call( getResourceFromName( "language-system" ), "getLanguageCount" ) then
+		if languageselected == exports["language-system"]:getLanguageCount() then
 			languageselected = 1
 		else
 			languageselected = languageselected + 1
 		end
 	end
 
-	guiSetText(gui["lblLanguageDisplay"], tostring(call( getResourceFromName( "language-system" ), "getLanguageName", languageselected )))
+	guiSetText(gui["lblLanguageDisplay"], tostring(exports["language-system"]:getLanguageName(languageselected )))
 end
 
 function newCharacter_updateScrollBars()

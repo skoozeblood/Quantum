@@ -253,7 +253,7 @@ function setInteriorFaction(thePlayer, cmd, ...)
 			return
 		end
 
-		call( getResourceFromName( "item-system" ), "deleteAll", interiorType == 1 and 5 or 4, dbid )
+		exports["item-system"]:deleteAll(interiorType == 1 and 5 or 4, dbid )
 		exports.global:giveItem(thePlayer, interiorType == 1 and 5 or 4, dbid)
 
 		exports.logs:dbLog(thePlayer, 37, { "in"..tostring(dbid) } , "SETINTFACTION INTERIOR ID#"..dbid.." TO FACTION '"..factionName.."'")
@@ -320,7 +320,7 @@ function setInteriorToMyFaction(thePlayer, cmd, fID)
 		return
 	end
 
-	call( getResourceFromName( "item-system" ), "deleteAll", interiorType == 1 and 5 or 4, dbid )
+	exports["item-system"]:deleteAll(interiorType == 1 and 5 or 4, dbid )
 	exports.global:giveItem(thePlayer, interiorType == 1 and 5 or 4, dbid)
 
 	exports.logs:dbLog(thePlayer, 37, { "in"..tostring(dbid) } , "SETINTTOMYFACTION INTERIOR ID#"..dbid.." TO FACTION '"..factionName.."'")

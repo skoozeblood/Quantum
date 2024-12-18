@@ -114,7 +114,7 @@ function useChair(chair)
 	sitting = true
 	myChair = chair
 	attachElements(localPlayer, chair, unpack(data.offset))
-	call(getResourceFromName("social"), "toggleCursor")
+	exports.social:toggleCursor()
 	if data.rotateable then
 		sitGUI(data.rotateable, rz + data.rotation)
 	end
@@ -156,7 +156,7 @@ function attemptToStandUp()
 		detachElements(localPlayer, myChair)
 		setElementPosition(localPlayer, px, py, pz)
 		px, py, pz = nil
-		call(getResourceFromName("social"), "toggleCursor")
+		exports.social:toggleCursor()
 		unsitGUI()
 	end
 end

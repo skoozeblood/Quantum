@@ -553,8 +553,7 @@ function showDescription(button, state)
 					desc = string.gsub((desc), "#v", tostring(value))
 
 					if (desc=="A Dictionary.") then
-						local res = getResourceFromName("language-system")
-						local lang = call(res, "getLanguageName", tonumber(value))
+						local lang = exports["language-system"]:getLanguageName(tonumber(value))
 						desc = "A " .. lang .. " dictionary."
 					end
 

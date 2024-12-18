@@ -1,7 +1,7 @@
 -- Language commands
 function getLanguageByName( language )
-	for i = 1, call( getResourceFromName( "language-system" ), "getLanguageCount" ) do
-		if language:lower() == call( getResourceFromName( "language-system" ), "getLanguageName", i ):lower() then
+	for i = 1, exports["language-system"]:getLanguageCount() do
+		if language:lower() == exports["language-system"]:getLanguageName(i ):lower() then
 			return i
 		end
 	end
@@ -27,8 +27,8 @@ function setLanguage(thePlayer, commandName, targetPlayerName, language, skill1)
 				if not lang then
 					outputChatBox( language .. " is not a valid Language.", thePlayer, 255, 0, 0 )
 				else
-					local langname = call( getResourceFromName( "language-system" ), "getLanguageName", lang )
-					local success, reason = call( getResourceFromName( "language-system" ), "learnLanguage", targetPlayer, lang, false, skill )
+					local langname = exports["language-system"]:getLanguageName(lang )
+					local success, reason = exports["language-system"]:learnLanguage(targetPlayer, lang, false, skill )
 					if success then
 						outputChatBox( targetPlayerName .. " learned " .. langname .. ".", thePlayer, 0, 255, 0 )
 						outputChatBox( targetPlayerName .. " learned " .. langname .. ".", targetPlayer, 0, 255, 0 )
@@ -59,8 +59,8 @@ function deleteLanguage(thePlayer, commandName, targetPlayerName, language)
 				if not lang then
 					outputChatBox( language .. " is not a valid Language.", thePlayer, 255, 0, 0 )
 				else
-					local langname = call( getResourceFromName( "language-system" ), "getLanguageName", lang )
-					if call( getResourceFromName( "language-system" ), "removeLanguage", targetPlayer, lang ) then
+					local langname = exports["language-system"]:getLanguageName(lang )
+					if exports["language-system"]:removeLanguage(targetPlayer, lang ) then
 						outputChatBox( targetPlayerName .. " forgot " .. langname .. ".", thePlayer, 0, 255, 0 )
 						outputChatBox( targetPlayerName .. " forgot " .. langname .. ".", targetPlayer, 0, 255, 0 )
 					else

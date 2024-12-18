@@ -287,7 +287,7 @@ function enterLiftFloor(id)
 				if movingInSameInt then
 					setElementPosition(player, x, y, z, true)
 				else
-					local dbid, entrance, exit, interiorType, interiorElement  = call( getResourceFromName( "interior_system" ), "findProperty", player, otherCP[INTERIOR_DIM] )
+					local dbid, entrance, exit, interiorType, interiorElement  = exports["interior-system"]:findProperty(player, otherCP[INTERIOR_DIM] )
 
 					--exports.interior_system:setPlayerInsideInterior3(false, player, lifttable)
 					exports.interior_system:setPlayerInsideInterior(interiorElement, player, otherCP, movingInSameInt, pickup)
@@ -312,7 +312,7 @@ function enterLiftFloor(otherCP, movingInSameInt, pickup, floorNum)
 			if movingInSameInt then
 				setElementPosition(player, x, y, z, true)
 			else
-				local dbid, entrance, exit, interiorType, interiorElement  = call( getResourceFromName( "interior_system" ), "findProperty", player, otherCP[INTERIOR_DIM] )
+				local dbid, entrance, exit, interiorType, interiorElement  = exports["interior-system"]:findProperty(player, otherCP[INTERIOR_DIM] )
 				exports.interior_system:setPlayerInsideInterior(interiorElement, player, otherCP, movingInSameInt, pickup)
 			end
 		end

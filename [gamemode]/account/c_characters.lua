@@ -577,7 +577,7 @@ local function getHoverElement()
 end
 
 local font1 = dxCreateFont(':resources/fonts/clbold.ttf') or "default-bold"
-local font2 = dxCreateFont(':interior_system/intNameFont.ttf') or "default-bold"
+local font2 = dxCreateFont(':resources/fonts/intNameFont.ttf') or "default-bold"
 function characterMouseOver()
 	local cursorX, cursorY
 	if isCursorShowing( ) then

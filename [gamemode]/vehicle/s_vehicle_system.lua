@@ -622,7 +622,7 @@ addEventHandler("onVehicleStartExit", getRootElement(), setRealNotInVehicle)
 -- Faction vehicles removal script
 function removeFromFactionVehicle(thePlayer)
 	local vfaction = getElementData( source, "faction" )
-	local CanTowDriverEnter = (call(getResourceFromName("tow-system"), "CanTowTruckDriverVehPos", thePlayer) == 2)
+	local CanTowDriverEnter = (exports["tow-system"]:CanTowTruckDriverVehPos(thePlayer) == 2)
 	if (vfaction~=-1) then
 		local seat = getPedOccupiedVehicleSeat(thePlayer)
 		local factionName = "None (to be deleted)"
@@ -1007,8 +1007,8 @@ function checkVehpos(veh, dbid)
 				destroyElement(veh)
 				local query = mysql:query_free("DELETE FROM vehicles WHERE id='" .. mysql:escape_string(id) .. "' LIMIT 1")
 
-				call( getResourceFromName( "item-system" ), "clearItems", veh )
-				call( getResourceFromName( "item-system" ), "deleteAll", 3, id )
+				exports["item-system"]:clearItems(veh )
+				exports["item-system"]:deleteAll(3, id )
 			end
 		end
 	end
@@ -1019,7 +1019,7 @@ local PershingSquareCol = createColRectangle( 1420, -1775, 130, 257 )
 local HospitalCol = createColRectangle( 1166, -1384, 52, 92 )
 
 local function canParkHere( thePlayer, veh )
-	if call( getResourceFromName("tow-system"), "cannotVehpos", thePlayer, veh ) and not exports.integration:isPlayerTrialAdmin(thePlayer, true) and not exports.integration:isPlayerSupporter(thePlayer, true) then
+	if exports["tow-system"]:cannotVehpos(thePlayer, veh ) and not exports.integration:isPlayerTrialAdmin(thePlayer, true) and not exports.integration:isPlayerSupporter(thePlayer, true) then
 		return not outputChatBox("It is not possible to park your vehicle here.", thePlayer, 255, 0, 0)
 	elseif isElementWithinColShape( thePlayer, HospitalCol ) and not exports.factions:isPlayerInFaction(thePlayer, 2) and not exports.integration:isPlayerTrialAdmin(thePlayer, true) and not exports.integration:isPlayerSupporter(thePlayer, true) then
 		return not outputChatBox("Only Los Santos Emergency Service is allowed to park their vehicles in front of the Hospital.", thePlayer, 255, 0, 0)
@@ -1036,12 +1036,12 @@ local function parkVeh( thePlayer, veh, commandName )
 		local dbid = getElementData(veh, "dbid")
 		local carfid = getElementData(veh, "faction")
 		local x, y, z = getElementPosition(veh)
-		local TowingReturn = call(getResourceFromName("tow-system"), "CanTowTruckDriverVehPos", thePlayer) -- 2 == in towing and in col shape, 1 == colshape only, 0 == not in col shape
+		local TowingReturn = exports["tow-system"]:CanTowTruckDriverVehPos(thePlayer) -- 2 == in towing and in col shape, 1 == colshape only, 0 == not in col shape
 		if (owner==playerid and TowingReturn == 0) or exports.global:hasItem(thePlayer, 3, dbid) or TowingReturn == 2 or exports.integration:isPlayerSupporter(thePlayer, true) or exports.integration:isPlayerTrialAdmin(thePlayer, true)  then
 			if (dbid<0) then
 				outputChatBox("This vehicle is not permanently spawned.", thePlayer, 255, 0, 0)
 			else
-				if (call(getResourceFromName("tow-system"), "CanTowTruckDriverGetPaid", thePlayer)) then
+				if (exports["tow-system"]:CanTowTruckDriverGetPaid(thePlayer)) then
 					-- pd has to pay for this impound
 					exports.global:giveMoney(exports.pool:getElement("team", 4), 75)
 					exports.global:takeMoney(exports.pool:getElement("team", 4), 75)
@@ -1174,7 +1174,7 @@ addCommandHandler("avehpos", setVehiclePosition2, false, false)
 addCommandHandler("apark", setVehiclePosition2, false, false)
 
 function setVehiclePosition3(veh)
-	if call( getResourceFromName("tow-system"), "cannotVehpos", source ) then
+	if exports["tow-system"]:cannotVehpos(source ) then
 		outputChatBox("Only Los Santos Towing & Recovery is allowed to park their vehicles on the Impound Lot.", source, 255, 0, 0)
 	elseif isElementWithinColShape( source, HospitalCol ) and not exports.factions:isPlayerInFaction(source, 2) and not exports.integration:isPlayerTrialAdmin(source) then
 		outputChatBox("Only Los Santos Emergency Service is allowed to park their vehicles in front of the Hospital.", source, 255, 0, 0)
@@ -1185,12 +1185,12 @@ function setVehiclePosition3(veh)
 		local owner = getElementData(veh, "owner")
 		local dbid = getElementData(veh, "dbid")
 		local x, y, z = getElementPosition(veh)
-		local TowingReturn = call(getResourceFromName("tow-system"), "CanTowTruckDriverVehPos", source) -- 2 == in towing and in col shape, 1 == colshape only, 0 == not in col shape
+		local TowingReturn = exports["tow-system"]:CanTowTruckDriverVehPos(source) -- 2 == in towing and in col shape, 1 == colshape only, 0 == not in col shape
 		if (owner==playerid and TowingReturn == 0) or (exports.global:hasItem(source, 3, dbid)) or (TowingReturn == 2) or (exports.integration:isPlayerTrialAdmin(source)) then
 			if (dbid<0) then
 				outputChatBox("This vehicle is not permanently spawned.", source, 255, 0, 0)
 			else
-				if (call(getResourceFromName("tow-system"), "CanTowTruckDriverGetPaid", source)) then
+				if (exports["tow-system"]:CanTowTruckDriverGetPaid(source)) then
 					-- pd has to pay for this impound
 					exports.global:giveMoney(getTeamFromName("326 Enterprises"), 75)
 					exports.global:takeMoney(getTeamFromName("Los Santos Police Department"), 75)

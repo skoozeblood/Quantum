@@ -414,7 +414,7 @@ addEventHandler("shop:expand", getRootElement(), expandBiz)
 function storeKeeperSay(thePlayer, content, pedName)
 	local languageslot = getElementData(thePlayer, "languages.current") or 1
 	local language = getElementData(thePlayer, "languages.lang" .. languageslot)
-	local languagename = call(getResourceFromName("language-system"), "getLanguageName", language)
+	local languagename = exports["language-system"]:getLanguageName(language)
 	pedName = string.gsub(pedName, "_" , " ")
 	if languagename == "<Invalid/Bugged Language>" then
 		outputDebugString("LANGUAGE " .. tostring(languageslot) .. " " .. tostring(language) )
@@ -477,7 +477,7 @@ function notifyAllShopOwners(shopElement, content)
 				if exports.global:hasItem(owner, 2) then
 					local languageslot = getElementData(owner, "languages.current") or 1
 					local language = getElementData(owner, "languages.lang" .. languageslot)
-					local languagename = call(getResourceFromName("language-system"), "getLanguageName", language)
+					local languagename = exports["language-system"]:getLanguageName(language)
 					local ownerName = getPlayerName(owner):gsub("_", " ")
 
 					exports.global:sendLocalText(owner, "*"..ownerName.." receives a text message.", 255, 51, 102, 30, {}, true)

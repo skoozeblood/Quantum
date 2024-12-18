@@ -498,7 +498,7 @@ function talkPhone(thePlayer, commandName, ...)
 	local username = getPlayerName(thePlayer):gsub("_", " ")
 	local languageslot = getElementData(thePlayer, "languages.current") or 1
 	local language = getElementData(thePlayer, "languages.lang" .. languageslot)
-	local languagename = call(getResourceFromName("language-system"), "getLanguageName", language)
+	local languagename = exports["language-system"]:getLanguageName(language)
 	local callingNumber = getElementData(thePlayer, "calling")
 	local callingNumberWith = getElementData(thePlayer, "callingwith")
 
@@ -513,7 +513,7 @@ function talkPhone(thePlayer, commandName, ...)
 	table.insert(affected, target)
 	table.insert(affected, "ph"..tostring(callingNumber))
 
-	message = call( getResourceFromName( "chat-system" ), "trunklateText", thePlayer, message )
+	message = exports["chat-system"]:trunklateText(thePlayer, message )
 	local theVehicle = getPedOccupiedVehicle(thePlayer)
 	distance = 40
 	local callprogress = getElementData(thePlayer, "callprogress")
@@ -542,7 +542,7 @@ function talkPhone(thePlayer, commandName, ...)
 		end
 	end
 
-	local translatedMessage = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, target, call( getResourceFromName( "chat-system" ), "trunklateText", target, message ), language)
+	local translatedMessage = exports["language-system"]:applyLanguage(thePlayer, target, exports["chat-system"]:trunklateText(target, message ), language)
 	if commandName == "plow" then
 		outputChatBox("[" .. languagename .. "] " .. username .. " whispers [Phone]: " .. translatedMessage, target)
 		outputChatBox("[" .. languagename .. "] " .. username .. " whispers [Phone]: " ..message, thePlayer)
@@ -588,12 +588,12 @@ function talkPhone(thePlayer, commandName, ...)
 						exports['freecam-tv']:add(affectedElements)
 						break
 					else
-						local translatedMessage = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, nearbyPlayer, call( getResourceFromName( "chat-system" ), "trunklateText", target, message ), language)
+						local translatedMessage = exports["language-system"]:applyLanguage(thePlayer, nearbyPlayer, exports["chat-system"]:trunklateText(target, message ), language)
 						outputChatBox("[" .. languagename .. "] " .. username .. "'s Cellphone Loudspeaker: " .. translatedMessage, nearbyPlayer)
 						table.insert(affected, nearbyPlayer)
 					end
 				else
-					local translatedMessage = call(getResourceFromName("language-system"), "applyLanguage", thePlayer, nearbyPlayer, call( getResourceFromName( "chat-system" ), "trunklateText", target, message ), language)
+					local translatedMessage = exports["language-system"]:applyLanguage(thePlayer, nearbyPlayer, exports["chat-system"]:trunklateText(target, message ), language)
 					outputChatBox("[" .. languagename .. "] " .. username .. "'s Cellphone Loudspeaker: " .. translatedMessage, nearbyPlayer)
 					table.insert(affected, nearbyPlayer)
 				end

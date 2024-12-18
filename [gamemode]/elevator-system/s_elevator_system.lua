@@ -314,11 +314,11 @@ function enterElevator(goingin)
 			return false
 		end
 
-		local dbid, entrance, exit, interiorType, interiorElement  = call( getResourceFromName( "interior_system" ), "findProperty", player, otherCP[INTERIOR_DIM] )
+		local dbid, entrance, exit, interiorType, interiorElement  = exports["interior-system"]:findProperty(player, otherCP[INTERIOR_DIM] )
 		if dbid > 0 then
 
 		else
-			dbid, entrance, exit, interiorType, interiorElement  = call( getResourceFromName( "interior_system" ), "findProperty", player, currentCP[INTERIOR_DIM] )
+			dbid, entrance, exit, interiorType, interiorElement  = exports["interior-system"]:findProperty(player, currentCP[INTERIOR_DIM] )
 		end
 
 		if vehicle and getElementData(player, "realinvehicle") == 1 then

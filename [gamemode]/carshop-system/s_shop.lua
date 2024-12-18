@@ -328,7 +328,7 @@ function carshop_buyVehicle(paymentMethod)
 	end
 
 	exports.logs:dbLog(client, 6, "ve"..tostring(insertid), "BOUGHTNEWCAR "..getVehicleNameFromModel(modelID).." (Custom Model ID #"..vehShopID..", Price: $"..exports.global:formatMoney(costCar)..")")
-	call( getResourceFromName( "item-system" ), "deleteAll", 3, insertid )
+	exports["item-system"]:deleteAll(3, insertid )
 	exports.global:giveItem( client, 3, insertid )
 	local tempPickup = getElementData(source,"carshop:childPickup")
 	if (isElement(tempPickup)) then
@@ -445,7 +445,7 @@ function notifyEveryoneWhoOrderedThisModel(shopname, shopnicename, vehicle_shop_
 				if exports.global:hasItem(player, 2) then
 					local languageslot = getElementData(player, "languages.current") or 1
 					local language = getElementData(player, "languages.lang" .. languageslot)
-					local languagename = call(getResourceFromName("language-system"), "getLanguageName", language)
+					local languagename = exports["language-system"]:getLanguageName(language)
 					local playerName = exports.global:getPlayerName(player)
 					local itemName = vehYear.." "..vehBrand.." "..vehModel
 

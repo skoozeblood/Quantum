@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `applications_questions` (
   `createdBy` int(8) NOT NULL DEFAULT '0',
   `updatedBy` int(8) NOT NULL DEFAULT '0',
   `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updateDate` TIMESTAMP NULL DEFAULT NULL,
   `part` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
@@ -1341,8 +1341,8 @@ CREATE TABLE IF NOT EXISTS `phone_contacts` (
 -- Dumping structure for table mta.phone_history
 CREATE TABLE IF NOT EXISTS `phone_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `from` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `to` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `from_card` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `to_card` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `state` tinyint(1) NOT NULL DEFAULT '1',
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `private` tinyint(1) NOT NULL DEFAULT '0',
@@ -1354,8 +1354,8 @@ CREATE TABLE IF NOT EXISTS `phone_history` (
 -- Dumping structure for table mta.phone_sms
 CREATE TABLE IF NOT EXISTS `phone_sms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `from` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `to` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `from_card` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `to_card` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `content` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `viewed` tinyint(1) NOT NULL DEFAULT '0',

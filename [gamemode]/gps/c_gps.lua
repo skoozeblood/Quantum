@@ -39,7 +39,7 @@ function hideGUI()
 	
 	vehicle = nil
 	
-	call(getResourceFromName("realism"), "showSpeedo")
+	exports.realism:showSpeedo()
 end
 
 function onVehicleEnter(player, nseat)
@@ -66,7 +66,7 @@ function showGUI()
 	guiLabelSetHorizontalAlign(helpLabel, "center")
 	guiSetFont(helpLabel, "default-bold-small")
 	
-	call(getResourceFromName("realism"), "hideSpeedo")
+	exports.realism:hideSpeedo()
 	
 	addEventHandler("onClientGUIClick", iMap, calculateRouteOnClick, false)
 	showCursor(true)

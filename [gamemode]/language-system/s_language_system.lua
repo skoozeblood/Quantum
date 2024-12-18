@@ -234,7 +234,7 @@ addEventHandler("unlearnLanguage", getRootElement(), unlearnLanguage)
 for key, value in pairs( languages ) do
 	function speakLang( thePlayer, commandName, ... )
 		if doesPlayerHaveLanguage( thePlayer, key ) then
-			call( getResourceFromName( "chat-system" ), "localIC", thePlayer, table.concat({...}, " "), key )
+			exports["chat-system"]:localIC(thePlayer, table.concat({...}, " "), key )
 		else
 			outputChatBox( "You do not speak " .. value .. ".", thePlayer, 255, 0, 0 )
 		end

@@ -67,7 +67,10 @@ function query_insert_free(...)
     return id or false
 end
 
-function query_free(...) return dbExec(dbList[defaultDB], ...) end
+function query_free(...)
+	-- print(dbPrepareString(dbList[defaultDB], ...))
+	return dbExec(dbList[defaultDB], ...)
+end
 
 
 --Custom functions
