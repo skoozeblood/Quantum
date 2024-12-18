@@ -19,4 +19,5 @@
 	<script src="c_gunlicensesmanager.lua" type="client"/>
 
 	<script src="g_questions.lua" type="shared" cache="false"/>
+	<export function="getDMVFID" type="server" />
 </meta>

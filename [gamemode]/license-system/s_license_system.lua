@@ -35,6 +35,10 @@ end
 addEvent("payFee", true)
 addEventHandler("payFee", getRootElement(), payFee)
 
+function getDMVFID()
+	return true
+end
+
 function showLicenses(thePlayer, commandName, targetPlayer)
 	--outputChatBox("This command is deprecated. Please show actual license/certificate from your inventory.", thePlayer, 255, 194, 14)
 	--return false

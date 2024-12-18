@@ -118,6 +118,18 @@ function loadOneWorldItem(row)
 end
 
 local mysql = exports.mysql
+
+local function fetchWorldItems()
+	local items = {}
+	local qh = dbQuery(function(qh)
+		local res, rows, err = dbPoll(qh,0)
+		iprint(res, rows, err)
+		items = res
+		return res
+	end, mysql:getConn('mta'), "SELECT * FROM worlditems WHERE deleted=0 AND id=? LIMIT 1", dbid)
+	dbFree(qh)
+	return items
+end
 function loadWorldItems()
 
 	-- not using this inactivity scanner stuff atm - Fernando
@@ -141,7 +153,7 @@ function loadWorldItems()
 	-- 	end
 	-- end
 
-	local g_items = exports["item-system"]:getAllItems()
+	local g_items = fetchWorldItems()
 	dbQuery(function(qh)
 		local res, rows, err = dbPoll(qh,0)
 		if rows > 0 then

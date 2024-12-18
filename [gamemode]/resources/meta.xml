@@ -2,13 +2,20 @@
 	<info author="OwlGamingPlus" type="script" description="Resources required for other systems to run."/>
 
 	<!-- Fonts-->
-	<file src="fonts/clbold.ttf"/>
-	<file src="fonts/segoeuil.ttf"/>
 	<file src="fonts/cartwheel.otf"/>
+	<file src="fonts/angrybirds.ttf"/>
 	<file src="fonts/Anton.ttf"/>
 	<file src="fonts/BizNote.ttf"/>
-	<file src="fonts/helveticastrong.ttf"/>
+	<file src="fonts/clbold.ttf"/>
 	<file src="fonts/digital.ttf"/>
+	<file src="fonts/EmblemaOne.ttf"/>
+	<file src="fonts/helveticastrong.ttf"/>
+	<file src="fonts/intNameFont.ttf"/>
+	<file src="fonts/nametags0.ttf"/>
+	<file src="fonts/open-iconic.ttf"/>
+	<file src="fonts/PetitFormalScript.ttf"/>
+	<file src="fonts/segoeuil.ttf"/>
+	<file src="fonts/tombstone.ttf"/>
 	
 	<!-- Images -->
 	<file src="images/loading.jpg"/>

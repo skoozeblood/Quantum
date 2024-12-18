@@ -13,8 +13,9 @@ function cPayDay(faction, pay, profit, interest, donatormoney, tax, incomeTax, v
 	-- state earnings/money from faction
 	if not (faction) then
 		if (pay + tax > 0) then
-			outputChatBox(, 255, 194, 14, true)
-			table.insert(info, {"  State Benefits: $" .. exports.global:formatMoney(pay+tax)})	
+			local stateBenefitsString = "  State Benefits: $" .. exports.global:formatMoney(pay+tax)
+			outputChatBox(stateBenefitsString, 255, 194, 14, true)
+			table.insert(info, stateBenefitsString)	
 		end
 	else
 		if (pay + tax > 0) then

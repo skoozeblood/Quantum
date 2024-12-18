@@ -112,9 +112,6 @@
     <!-- Sunglasses -->
     <file src="models/sunglasses.dff"/>
     <file src="models/sunglasses.txd"/>
-    <!-- Snapback -->
-    <file src="models/snapback.dff"/>
-    <file src="models/snapback.txd"/>
     <!-- Holstered Gun Left Hip -->
     <file src="models/holstgun.dff"/>
     <file src="models/holstgun.txd"/>
