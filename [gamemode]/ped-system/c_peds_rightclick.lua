@@ -411,7 +411,8 @@ function clickPed(button, state, absX, absY, wx, wy, wz, element)
 					end, true)
 
 				-- tow impound ped 1
-				elseif getElementData(element, "tow-sys:impoundPed1") then
+				
+					elseif(interact == "impound") then
 					rcMenu = exports.rightclick:create(getElementData(element, "rpp.npc.name"))
 					row.talk = exports.rightclick:addrow("File a report")
 					addEventHandler("onClientGUIClick", row.talk,  function (button, state)
@@ -419,7 +420,7 @@ function clickPed(button, state, absX, absY, wx, wy, wz, element)
 					end, true)
 
 				-- tow release ped 1
-				elseif getElementData(element, "tow-sys:releasePed1") then
+				elseif(interact == "releasePed") then
 
 					rcMenu = exports.rightclick:create(getElementData(element, "rpp.npc.name"))
 					row.talk = exports.rightclick:addrow("Impound")
