@@ -16,6 +16,8 @@ function toggleReport()
 	end
 end
 
+bindKey("F2", "down", toggleReport)
+
 function checkBinds()
 	if ( exports.integration:isPlayerTrialAdmin(getLocalPlayer()) or getElementData( getLocalPlayer(), "account:gmlevel" )  ) then
 		if getBoundKeys("ar") or getBoundKeys("acceptreport") then

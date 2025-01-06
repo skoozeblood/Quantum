@@ -6,7 +6,7 @@ addEventHandler("onPlayerJoin", getRootElement(), bindKeysOnJoin)
 ]]
 
 function bindAnimationStopKey()
-	bindKey(source, "space", "down", stopAnimation)
+	bindKey(source, "f", "down", stopAnimation)
 end
 addEvent("bindAnimationStopKey", false)
 addEventHandler("bindAnimationStopKey", getRootElement(), bindAnimationStopKey)
@@ -24,7 +24,7 @@ addEvent("unforcedanim", true)
 addEventHandler("unforcedanim", getRootElement(), unforcedAnim)
 
 function unbindAnimationStopKey()
-	unbindKey(source, "space", "down", stopAnimation)
+	unbindKey(source, "f", "down", stopAnimation)
 end
 addEvent("unbindAnimationStopKey", true)
 addEventHandler("unbindAnimationStopKey", getRootElement(), unbindAnimationStopKey)
@@ -37,7 +37,7 @@ function stopAnimation(thePlayer)
 		toggleControl ( thePlayer, 'jump', false )
 		setTimer( toggleControl, 1000, 1, thePlayer, 'jump', true )
 		exports.anticheat:setEld( thePlayer, 'animation', nil, 'all' )
-		unbindKey( thePlayer , "space", "down", stopAnimation )
+		unbindKey( thePlayer , "f", "down", stopAnimation )
 	end
 end
 addCommandHandler("stopanim", stopAnimation, false, false)
